@@ -43,7 +43,7 @@ export default class World {
       let start = performance.now()
 
       // Create and run a worker for worldgen //
-      let generationWorker = new Worker("../Workers/generation.js");
+      let generationWorker = new Worker(location.href + "Workers/generation.js");
       generationWorker.postMessage([settings, this.width, this.height]);
 
       // Update the progress bar //
