@@ -12,6 +12,7 @@ onmessage = function (e) {
   var data = [];
   var perlin = new Perlin();
   var pondPerlin = new Perlin();
+  var decPerlin = new Perlin();
 
   console.debug("(worker) Generating world...")
   for (let y = 0; y < height; y++) {
@@ -37,15 +38,29 @@ onmessage = function (e) {
       else if (p > settings.sand && p <= settings.grass) {
         let w = pondPerlin.get(x * settings.pondScale + 0.5, y * settings.pondScale + 0.5);
 
+        // Create random ponds on land
         if (w > 0.3 && p > settings.sand + 0.05)
-          cur = { type: 'water', dec: 0 };
-        else {
-          let random = ~~(Math.random() * 3) + Math.round(Math.random() * 0.55) * 3;
+          cur = { type: 'water', dec: Math.round(Math.random() * 0.7) };
 
-          cur = {
-            type: 'grass',
-            dec: random
-          };
+        else {
+          // Select a random decoration for the tile
+          let decScale = 0.17;
+          let dec = (decPerlin.get(x * decScale + 0.5, y * decScale + 0.5) + 1) / 2;
+
+          // Flower patches
+          if (dec > 0.7) {
+            cur = {
+              type: 'grass',
+              dec: 5 + Math.round(Math.random() * 2)
+            }
+
+          } else {
+            // Grass
+            cur = {
+              type: 'grass',
+              dec: ~~(Math.random() * 4 + Math.round(Math.random() * 0.6))
+            };
+          }
         }
       }
 

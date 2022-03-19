@@ -33,11 +33,10 @@ export default class World {
    * @param {Number} settings.ocean - The threshold for ocean generation
    * @param {Number} settings.sand  - The threshold for beach generation
    * @param {Number} settings.grass - The threshold for grass generation
-   * 
-   * @param {CanvasRenderingContext2D} ctx - Canvas context used for a loading screen (Optional)
    */
   async generate(settings) {
     let self = this;
+    loadingScreen.childNodes[0].nodeValue = 'Generating world';
 
     return new Promise((resolve, reject) => {
       let start = performance.now()
@@ -94,7 +93,7 @@ export default class World {
 
     // Full block
     if (this.check([0, 0, 0, 0], merge, x, y)) {
-      coords = [0 + tile.dec % 3, 4 + ~~(tile.dec / 3)];
+      coords = [0 + tile.dec % 4, 4 + ~~(tile.dec / 4)];
     }
 
     // Top edge
