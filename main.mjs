@@ -1,9 +1,9 @@
-import * as Input from "./Classes/input.mjs";
+import * as Input from "Classes/input.mjs";
 
-import { loadImageAsync } from "./Classes/utility.mjs";
+import { loadImageAsync } from "Classes/utility.mjs";
 
-import { Tile, Tileset } from "./Classes/tile.mjs";
-import World from "./Classes/world.mjs";
+import { Tile, Tileset } from "Classes/tile.mjs";
+import World from "Classes/world.mjs";
 
 var canvas = document.getElementById("canvas");
 canvas.width = 256;
