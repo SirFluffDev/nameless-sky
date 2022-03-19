@@ -13,9 +13,9 @@ ctx.fillStyle = "#ffffff";
 
 // Image loading function //
 var tilesets = {
-  sand: new Tileset(await loadImageAsync("./sand.png"), 16),
-  grass: new Tileset(await loadImageAsync("./grass.png"), 16),
-  water: new Tileset(await loadImageAsync("./water.png"), 16)
+  sand: new Tileset(await loadImageAsync("./Assets/sand.png"), 16),
+  grass: new Tileset(await loadImageAsync("./Assets/grass.png"), 16),
+  water: new Tileset(await loadImageAsync("./Assets/water.png"), 16)
 }
 
 Tile.create('grass', 6, 'sand', tilesets.grass)
