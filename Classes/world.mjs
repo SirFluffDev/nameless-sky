@@ -1,5 +1,5 @@
 // Import perlin noise library for worldgen //
-import { Tile, Tileset } from "tile.mjs";
+import { Tile, Tileset } from "./tile.mjs";
 
 let loadingScreen = document.getElementById("loading");
 let loadingBar = loadingScreen.children[0].children[0];
