@@ -1,7 +1,7 @@
 console.debug("Worker created!");
 
 // Load in the Perlin module //
-self.importScripts('/Classes/Static/perlin.js');
+self.importScripts('../Classes/Static/perlin.js');
 
 onmessage = function (e) {
   var settings = e.data[0];
