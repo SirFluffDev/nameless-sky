@@ -86,8 +86,8 @@ function loop(timestamp) {
   layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height)
 
   let px, py;
-  if (player.x < 7 * 16) px = player.x; else px = 7 * 16;
-  if (player.y < 4 * 16) py = player.y; else py = 4 * 16;
+  if (player.x < 7 * 16) px = ~~player.x; else px = 7 * 16;
+  if (player.y < 4 * 16) py = ~~player.y; else py = 4 * 16;
 
   layers.player.fillRect(px, py, 16, 16)
 
