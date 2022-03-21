@@ -53,7 +53,9 @@ await world.generate({
   grass: 0.7,
 });
 
-var player = new Player();
+var player = new Player(
+  await loadImageAsync("./Assets/player.png")
+);
 
 // Display the generated snippet of world
 function draw() {
@@ -77,24 +79,30 @@ var prevX = 0, prevY = 0;
 function loop(timestamp) {
   window.requestAnimationFrame(loop);
 
-  player.update(layers.world.canvas);
+  player.update(layers.world.canvas, world, timestamp);
+
+  // Re-draw the world if the player moves a tile
   if (
     prevX !== Math.floor(Math.max(player.x / 16, 0)) ||
     prevY !== Math.floor(Math.max(player.y / 16, 0))
   ) { draw(); console.log("Updated!") }
 
+  // Clear the entity canvas
   layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height)
 
+  // Draw the player in the correct position
   let px, py;
   if (player.x < 7 * 16) px = ~~player.x; else px = 7 * 16;
   if (player.y < 4 * 16) py = ~~player.y; else py = 4 * 16;
-
-  layers.player.fillRect(px, py, 16, 16)
 
   // Cache the previous tile's position
   prevX = ~~Math.max(player.x / 16, 0);
   prevY = ~~Math.max(player.y / 16, 0);
 
+  //Draw the player onscreen
+  player.draw(layers.player, px, py);
+
+  // Clear input buffers
   Input.reset();
 }
 
