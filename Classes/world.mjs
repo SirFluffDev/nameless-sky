@@ -152,6 +152,10 @@ export default class World {
     if (this.check([0, 1, 1, 1], merge, x, y))
       coords = [3, 2]
 
+    //Bottom stub
+    if (this.check([1, 1, 1, 1], merge, x, y))
+      coords = [3, 3]
+
     tileset.drawTile(ctx, coords[0], coords[1], dx, dy);
   }
 

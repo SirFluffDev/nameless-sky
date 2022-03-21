@@ -6,6 +6,19 @@ body {
 }
 
 canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#container {
   padding: 0;
   margin: auto;
   display: block;
@@ -14,16 +27,11 @@ canvas {
   bottom: 0;
   left: 0;
   right: 0;
-
-  width: 1024px;
-  height: 512px;
-
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-
   outline: 2px solid grey;
+  background-color: grey;
+  overflow: hidden;
+  width: 960px;
+  height: 576px;
 }
 
 #loading {
