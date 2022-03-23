@@ -26,6 +26,12 @@ export default class Player {
     this.animationStart = 0;
   }
 
+  /**
+   * Update all the player's information, and adjust the screen offset
+   * @param {HTMLCanvasElement} canvas 
+   * @param {World} world 
+   * @param {DOMHighResTimeStamp} timestamp 
+   */
   update(canvas, world, timestamp) {
     this.timestamp = timestamp;
     let moving = new Vector(this.xVel, this.yVel).magnitude() > 0.2;
@@ -85,12 +91,11 @@ export default class Player {
       canvas.style.top = py + 'px';
   }
 
+  // Draw and animate the player onscreen
   draw(ctx, px, py) {
     let moving = (new Vector(this.xVel, this.yVel).magnitude() > 0.2);
 
-    let dx = 0;
-
-    dx = moving ? ~~((this.timestamp - this.animationStart) / 200) % 2 + 1 : 0;
+    let dx = moving ? ~~((this.timestamp - this.animationStart) / 200) % 2 + 1 : 0;
 
     ctx.drawImage(
       this.spritesheet,

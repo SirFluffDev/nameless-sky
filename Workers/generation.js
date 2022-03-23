@@ -24,12 +24,12 @@ onmessage = function (e) {
       let cur;
 
       // Ocean
-      if (p <= settings.ocean) { cur = { type: 'water', dec: 0 }; }
+      if (p <= settings.ocean) { cur = { id: 0, dec: 0 }; }
 
       // Beaches
       else if (p > settings.ocean && p <= settings.sand) {
         cur = {
-          type: 'sand',
+          id: 2,
           dec: Math.round(Math.random() * 0.55) * ~~(Math.random() * 3)
         };
       }
@@ -40,7 +40,7 @@ onmessage = function (e) {
 
         // Create random ponds on land
         if (w > 0.3 && p > settings.sand + 0.05)
-          cur = { type: 'water', dec: Math.round(Math.random() * 0.7) };
+          cur = { id: 0, dec: Math.round(Math.random() * 0.7) };
 
         else {
           // Select a random decoration for the tile
@@ -50,14 +50,14 @@ onmessage = function (e) {
           // Flower patches
           if (dec > 0.7) {
             cur = {
-              type: 'grass',
+              id: 1,
               dec: 5 + Math.round(Math.random() * 2)
             }
 
           } else {
             // Grass
             cur = {
-              type: 'grass',
+              id: 1,
               dec: ~~(Math.random() * 4 + Math.round(Math.random() * 0.6))
             };
           }
@@ -65,7 +65,7 @@ onmessage = function (e) {
       }
 
       // Mountains
-      else { cur = { type: 'stone', dec: 0 }; }
+      else { cur = { id: 3, dec: 0 }; }
 
       // Push the generated tile to the world array //
       data[y].push(cur);

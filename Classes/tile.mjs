@@ -1,20 +1,20 @@
 /** Class used for both types of tiles and instances of them */
 class Tile {
-  static types = {};
+  static types = [];
+  static id = {};
 
   /** 
    * Create a new type of tile 
-   * @param {string} name - The tile's name
-   * @param {Number} decs - The amount of tile variations that can be used
-   * @param {String} merge - The type of tile it connects to
-   * @param {Tileset} tileset - The tileset used for the tile
+   * @param {object} properties - The Tile's properties
+   * 
+   * @param {string} properties.name - The tile's name
+   * @param {Tileset} properties.tileset - The tileset used for the tile
+   * @param {number} properties.decs - The amount of tile variations that can be used
+   * @param {string} properties.merge - The type of tile it connects to
    */
-  static create(name, decs, merge, tileset) {
-    Tile.types[name] = {
-      tileset: tileset,
-      decs: decs,
-      merge: merge
-    }
+  static create(properties) {
+    Tile.id[properties.name] = Tile.types.length;
+    Tile.types.push(properties);
   }
 }
 

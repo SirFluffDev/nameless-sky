@@ -1,5 +1,5 @@
 // Import perlin noise library for worldgen //
-import { Tile, Tileset } from "./tile.mjs";
+import { Tile } from "./tile.mjs";
 
 let loadingScreen = document.getElementById("loading");
 let loadingBar = loadingScreen.children[0].children[0];
@@ -36,7 +36,7 @@ export default class World {
    */
   async generate(settings) {
     let self = this;
-    loadingScreen.childNodes[0].nodeValue = 'Generating world';
+    loadingScreen.childNodes[0].nodeValue = `Generating world (${this.width} x ${this.height})`;
 
     return new Promise((resolve, reject) => {
       let start = performance.now()
@@ -73,21 +73,24 @@ export default class World {
     if ((this.data[y] || [])[x])
       return this.data[y][x];
     else
-      return { type: 'water', dec: 0 };
+      return { id: 0, dec: 0 };
   }
 
   draw(ctx, x, y, dx, dy) {
     let tile = this.get(x, y);
 
     // If the tileset/tile is missing, draw an error texure and cancel the function
-    if (!Tile.types[tile.type]) {
+    if (!Tile.types[tile.id]) {
       ctx.fillStyle = "#ff00ff";
       ctx.fillRect(dx, dy, 16, 16);
       return;
     }
 
-    let tileset = Tile.types[tile.type].tileset;
-    let merge = Tile.types[tile.type].merge;
+    // Get all needed tile information
+    let tileType = Tile.types[tile.id];
+
+    let tileset = tileType.tileset;
+    let merge = Tile.id[tileType.merge];
 
     let coords = [];
 
@@ -161,10 +164,10 @@ export default class World {
 
   check(arr, t, x, y) {
     return (
-      (this.get(x, y - 1).type == t) == arr[0] &&
-      (this.get(x - 1, y).type == t) == arr[1] &&
-      (this.get(x + 1, y).type == t) == arr[2] &&
-      (this.get(x, y + 1).type == t) == arr[3]
+      (this.get(x, y - 1).id == t) == arr[0] &&
+      (this.get(x - 1, y).id == t) == arr[1] &&
+      (this.get(x + 1, y).id == t) == arr[2] &&
+      (this.get(x, y + 1).id == t) == arr[3]
     )
   }
 }

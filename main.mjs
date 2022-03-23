@@ -6,13 +6,7 @@ import { Tile, Tileset } from "./Classes/tile.mjs";
 import World from "./Classes/world.mjs";
 import Player from "./Classes/player.mjs";
 
-/*var canvas = document.getElementById("canvas");
-canvas.width = 240 + 16;
-canvas.height = 144 + 16;
-var ctx = canvas.getContext("2d", { alpha: false });
-canvas.style.width = canvas.width * 4 + 'px';
-canvas.style.height = canvas.height * 4 + 'px';*/
-
+// Load canvases
 var layers = {};
 let layersObj = document.getElementsByTagName("canvas");
 for (let i = 0; i < layersObj.length; i++) {
@@ -23,26 +17,39 @@ for (let i = 0; i < layersObj.length; i++) {
   c.style.width = c.width * 4 + 'px';
   c.style.height = c.height * 4 + 'px';
 
-  let a = ((c.getAttribute('alpha') || null) == 'true');
-
-  layers[c.getAttribute('layername')] = c.getContext('2d', { alpha: a });
+  layers[c.getAttribute('layername')] = c.getContext('2d', {
+    alpha: ((c.getAttribute('alpha') || null) == 'true')
+  });
 }
 
-console.log(layers.world)
-layers.world.fillStyle = "#ffffff";
-
-// Image loading function //
+// Load all needed tilesets
 var tilesets = {
   sand: new Tileset(await loadImageAsync("./Assets/sand.png"), 16),
   grass: new Tileset(await loadImageAsync("./Assets/grass.png"), 16),
   water: new Tileset(await loadImageAsync("./Assets/water.png"), 16)
 }
 
-Tile.create('grass', 6, 'sand', tilesets.grass)
-Tile.create('sand', 3, 'water', tilesets.sand)
-Tile.create('water', 0, 'grass', tilesets.water)
+Tile.create({
+  name: 'water',
+  merge: 'grass',
+  tileset: tilesets.water
+});
 
-var world = new World('worldname', 64, 64);
+Tile.create({
+  name: 'grass',
+  merge: 'sand',
+
+  tileset: tilesets.grass
+});
+
+Tile.create({
+  name: 'sand',
+  merge: 'water',
+
+  tileset: tilesets.sand
+});
+
+var world = new World('worldname', 512, 512);
 
 await world.generate({
   scale: 0.02,
