@@ -38,14 +38,12 @@ Tile.create({
 Tile.create({
   name: 'grass',
   merge: 'sand',
-
   tileset: tilesets.grass
 });
 
 Tile.create({
   name: 'sand',
   merge: 'water',
-
   tileset: tilesets.sand
 });
 

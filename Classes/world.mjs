@@ -83,6 +83,9 @@ export default class World {
     if (!Tile.types[tile.id]) {
       ctx.fillStyle = "#ff00ff";
       ctx.fillRect(dx, dy, 16, 16);
+
+      console.error("Tile was unable to be drawn:", tile);
+
       return;
     }
 
