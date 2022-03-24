@@ -26,28 +26,43 @@ for (let i = 0; i < layersObj.length; i++) {
 var tilesets = {
   sand: new Tileset(await loadImageAsync("./Assets/sand.png"), 16),
   grass: new Tileset(await loadImageAsync("./Assets/grass.png"), 16),
-  water: new Tileset(await loadImageAsync("./Assets/water.png"), 16)
+  water: new Tileset(await loadImageAsync("./Assets/water.png"), 16),
+  stone: new Tileset(await loadImageAsync("./Assets/stone.png"), 16)
 }
 
 Tile.create({
   name: 'water',
   merge: 'grass',
-  tileset: tilesets.water
+  tileset: tilesets.water,
+
+  solid: false
 });
 
 Tile.create({
   name: 'grass',
   merge: 'sand',
-  tileset: tilesets.grass
+  tileset: tilesets.grass,
+
+  solid: false
 });
 
 Tile.create({
   name: 'sand',
   merge: 'water',
-  tileset: tilesets.sand
+  tileset: tilesets.sand,
+
+  solid: false
 });
 
-var world = new World('worldname', 512, 512);
+Tile.create({
+  name: 'stone',
+  merge: 'grass',
+  tileset: tilesets.stone,
+
+  solid: true
+});
+
+var world = new World('worldname', 64, 64);
 
 await world.generate({
   scale: 0.02,
@@ -59,11 +74,14 @@ await world.generate({
 });
 
 var player = new Player(
-  await loadImageAsync("./Assets/player.png")
+  await loadImageAsync("./Assets/player.png"),
+  32 * 16, 32 * 16
 );
 
 // Display the generated snippet of world
 function draw() {
+  layers.world.clearRect(0, 0, layers.world.canvas.width, layers.world.canvas.height);
+
   for (let dy = 0; dy < 8 + 2; dy++) {
     for (let dx = 0; dx < 16 + 1; dx++) {
       let x = dx + ~~Math.max(player.x / 16 - 7, 0);
@@ -77,9 +95,7 @@ function draw() {
 
 draw()
 
-console.log("Rendering finished!")
-
-var prevX = 0, prevY = 0;
+var prevX, prevY;
 
 function loop(timestamp) {
   window.requestAnimationFrame(loop);
@@ -90,7 +106,10 @@ function loop(timestamp) {
   if (
     prevX !== Math.floor(Math.max(player.x / 16, 0)) ||
     prevY !== Math.floor(Math.max(player.y / 16, 0))
-  ) { draw(); console.log("Updated!") }
+  ) {
+    draw();
+    console.debug("Updated!")
+  }
 
   // Clear the entity canvas
   layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height)

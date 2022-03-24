@@ -11,6 +11,7 @@ class Tile {
    * @param {Tileset} properties.tileset - The tileset used for the tile
    * @param {number} properties.decs - The amount of tile variations that can be used
    * @param {string} properties.merge - The type of tile it connects to
+   * @param {boolean} properties.solid - How the tile is treated (Flooring, walls, etc.)
    */
   static create(properties) {
     Tile.id[properties.name] = Tile.types.length;

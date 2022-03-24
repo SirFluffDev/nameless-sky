@@ -83,18 +83,33 @@ export default class World {
     if (!Tile.types[tile.id]) {
       ctx.fillStyle = "#ff00ff";
       ctx.fillRect(dx, dy, 16, 16);
-
-      console.error("Tile was unable to be drawn:", tile);
-
       return;
     }
 
     // Get all needed tile information
     let tileType = Tile.types[tile.id];
-
     let tileset = tileType.tileset;
     let merge = Tile.id[tileType.merge];
 
+
+    // Drawing walls
+    let above = Tile.types[this.get(x, y - 1).id];
+    if (tileType.solid) {
+      tileset.drawTile(ctx, 3, 0, dx, dy); return;
+    } else if (above.solid) {
+      if (this.checkWalls([0, 1], x, y - 1))
+        above.tileset.drawTile(ctx, 0, 0, dx, dy);
+
+      if (this.checkWalls([1, 0], x, y - 1))
+        above.tileset.drawTile(ctx, 2, 0, dx, dy);
+
+      if (this.checkWalls([1, 1], x, y - 1))
+        above.tileset.drawTile(ctx, 1, 0, dx, dy);
+
+      return;
+    }
+
+    // Drawing normal tiles //
     let coords = [];
 
     // Full block
@@ -166,11 +181,19 @@ export default class World {
   }
 
   check(arr, t, x, y) {
+    // Normal tiles
     return (
       (this.get(x, y - 1).id == t) == arr[0] &&
       (this.get(x - 1, y).id == t) == arr[1] &&
       (this.get(x + 1, y).id == t) == arr[2] &&
       (this.get(x, y + 1).id == t) == arr[3]
-    )
+    );
+  }
+
+  checkWalls(arr, x, y) {
+    return (
+      (Tile.types[this.get(x - 1, y).id].solid) == arr[0] &&
+      (Tile.types[this.get(x + 1, y).id].solid) == arr[1]
+    );
   }
 }

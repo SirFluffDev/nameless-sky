@@ -8,9 +8,9 @@ import { loadImageAsync } from "./utility.mjs";
  * @param {Image} spritesheet - The spritesheet to use for the player
  */
 export default class Player {
-  constructor(spritesheet) {
-    this.x = 0;
-    this.y = 0;
+  constructor(spritesheet, x = 0, y = 0) {
+    this.x = x;
+    this.y = y;
 
     // Movement variables
     this.friction = 0.8;
