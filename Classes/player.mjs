@@ -32,13 +32,13 @@ export default class Player {
    * @param {World} world 
    * @param {DOMHighResTimeStamp} timestamp 
    */
-  update(canvas, world, timestamp, ctx) {
+  update(canvas, world, timestamp) {
     this.timestamp = timestamp;
     let moving = new Vector(this.xVel, this.yVel).magnitude() > 0.2;
 
     // Get the tile the player is standing on
     let currentTile = world.get(
-      Math.floor(this.x / 16), Math.floor(this.y / 16)
+      ~~(this.x / 16), ~~(this.y / 16)
     );
 
     // Adjust velocity and direction based off keyboard input
@@ -78,19 +78,21 @@ export default class Player {
     this.xVel *= this.friction;
     this.yVel *= this.friction;
 
+    // Stop player from crossing the world border
+    this.x = Math.max(this.x, 0)
+    this.y = Math.max(this.y, 0)
+
     if (Math.abs(this.xVel) < 0.16) this.xVel = 0;
 
     // Calculate world offset from player position
-    let px = -Math.floor(this.x) % 16 * 4;
-    let py = -Math.floor(this.y) % 16 * 4;
+    let px = -~~(this.x) % 16 * 4;
+    let py = -~~(this.y) % 16 * 4;
 
-    if (ctx) {
-      ctx.fillStyle = "#000000";
-      ctx.fillText(px, 0, 8);
-    }
+    if (this.x > 7 * 16)
+      canvas.style.left = px + 'px';
 
-    canvas.style.left = px + 'px';
-    canvas.style.top = py + 'px';
+    if (this.y >= 4 * 16)
+      canvas.style.top = py + 'px';
   }
 
   // Draw and animate the player onscreen
