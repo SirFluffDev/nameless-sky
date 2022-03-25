@@ -75,7 +75,7 @@ await world.generate({
 
 var player = new Player(
   await loadImageAsync("./Assets/player.png"),
-  32 * 16, 32 * 16
+  0, 0
 );
 
 // Display the generated snippet of world
@@ -84,8 +84,8 @@ function draw() {
 
   for (let dy = 0; dy < 8 + 2; dy++) {
     for (let dx = 0; dx < 16 + 1; dx++) {
-      let x = dx + ~~Math.max(player.x / 16 - 7, 0);
-      let y = dy + ~~Math.max(player.y / 16 - 4, 0);
+      let x = dx + Math.floor(player.x / 16) - 7;
+      let y = dy + Math.floor(player.y / 16) - 4;
 
       //var tile = world.get(x, y);
       world.draw(layers.world, x, y, dx * 16, dy * 16);
@@ -100,28 +100,28 @@ var prevX, prevY;
 function loop(timestamp) {
   window.requestAnimationFrame(loop);
 
-  player.update(layers.world.canvas, world, timestamp);
+  // Clear the entity canvas
+  layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height)
+  player.update(layers.world.canvas, world, timestamp, layers.player);
 
   // Re-draw the world if the player moves a tile
   if (
-    prevX !== Math.floor(Math.max(player.x / 16, 0)) ||
-    prevY !== Math.floor(Math.max(player.y / 16, 0))
+    prevX !== ~~(player.x / 16, 0) ||
+    prevY !== ~~(player.y / 16, 0)
   ) {
     draw();
     console.debug("Updated!")
   }
 
-  // Clear the entity canvas
-  layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height)
 
   // Draw the player in the correct position
   let px, py;
-  if (player.x < 7 * 16) px = ~~player.x; else px = 7 * 16;
-  if (player.y < 4 * 16) py = ~~player.y; else py = 4 * 16;
+  px = 7 * 16;
+  py = 4 * 16;
 
   // Cache the previous tile's position
-  prevX = ~~Math.max(player.x / 16, 0);
-  prevY = ~~Math.max(player.y / 16, 0);
+  prevX = ~~(player.x / 16);
+  prevY = ~~(player.y / 16);
 
   //Draw the player onscreen
   player.draw(layers.player, px, py);
