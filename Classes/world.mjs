@@ -93,18 +93,18 @@ export default class World {
 
 
     // Drawing walls
-    let above = Tile.types[this.get(x, y - 1).id];
-    if (tileType.solid) {
-      tileset.drawTile(ctx, 3, 0, dx, dy); return;
-    } else if (above.solid) {
-      if (this.checkWalls([0, 1], x, y - 1))
-        above.tileset.drawTile(ctx, 0, 0, dx, dy);
+    let below = Tile.types[this.get(x, y + 1).id];
+    if (below.solid) {
+      below.tileset.drawTile(ctx, 3, 0, dx, dy); return;
+    } else if (tileType.solid) {
+      if (this.checkWalls([1, 1], x, y))
+        tileset.drawTile(ctx, 1, 0, dx, dy);
 
-      if (this.checkWalls([1, 0], x, y - 1))
-        above.tileset.drawTile(ctx, 2, 0, dx, dy);
+      if (this.checkWalls([0, 1], x, y))
+        tileset.drawTile(ctx, 0, 0, dx, dy);
 
-      if (this.checkWalls([1, 1], x, y - 1))
-        above.tileset.drawTile(ctx, 1, 0, dx, dy);
+      if (this.checkWalls([1, 0], x, y))
+        tileset.drawTile(ctx, 2, 0, dx, dy);
 
       return;
     }

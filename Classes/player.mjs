@@ -66,6 +66,10 @@ export default class Player {
       if (!moving) this.animationStart = this.timestamp;
     }
 
+    //#region - World collision
+    let newX = ~~(this.x + this.xVel), newY = ~~(this.y + this.yVel);
+    //#endregion
+
     // Move player based off velocity
     this.x += this.xVel;
     this.y += this.yVel;
