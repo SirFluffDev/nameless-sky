@@ -13,7 +13,7 @@ export function loadImageAsync(src) {
 }
 
 export class Vector {
-  constructor(x, y) {
+  constructor(x = 0, y = 0) {
     this.x = x;
     this.y = y;
   }
@@ -23,11 +23,26 @@ export class Vector {
   }
 
   normalize() {
-    let m = this.magnitude()
+    if (this.x || this.y) {
+      let m = this.magnitude();
 
-    this.x /= m;
-    this.y /= m;
+      this.x /= m;
+      this.y /= m;
 
-    return this;
+      return this;
+    }
+  }
+
+  toDegrees() {
+    // Calculate radians
+    let radians = Math.atan2(this.y, this.x);
+
+    // Make radians positive
+    if (radians < 0) {
+      radians += 2 * Math.PI;
+    }
+
+    // Return number in degrees
+    return radians * 180 / Math.PI;
   }
 }

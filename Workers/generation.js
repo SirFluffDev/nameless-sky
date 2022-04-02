@@ -4,15 +4,15 @@ console.debug("Worker created!");
 self.importScripts('../Classes/Static/perlin.js');
 
 onmessage = function (e) {
-  var settings = e.data[0];
+  let settings = e.data[0];
 
-  var width = e.data[1];
-  var height = e.data[2];
+  let width = e.data[1];
+  let height = e.data[2];
 
-  var data = [];
-  var perlin = new Perlin();
-  var pondPerlin = new Perlin();
-  var decPerlin = new Perlin();
+  let data = [];
+  let perlin = new Perlin();
+  let pondPerlin = new Perlin();
+  let decPerlin = new Perlin();
 
   console.debug("(worker) Generating world...")
   for (let y = 0; y < height; y++) {

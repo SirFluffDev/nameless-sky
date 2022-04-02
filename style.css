@@ -1,11 +1,16 @@
+:root {
+  touch-action: pan-x pan-y;
+  height: 100%
+}
+
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
   background-color: black;
+  overflow: hidden;
 }
 
-canvas {
+#container>canvas {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -27,11 +32,8 @@ canvas {
   bottom: 0;
   left: 0;
   right: 0;
-  outline: 2px solid grey;
   background-color: grey;
   overflow: hidden;
-  width: 960px;
-  height: 576px;
 }
 
 #loading {
@@ -51,7 +53,7 @@ canvas {
   width: 512px;
 }
 
-#loading > div {
+#loading>div {
   margin-top: 5px;
   padding: 0px;
 
@@ -61,7 +63,7 @@ canvas {
   outline-offset: 2px;
 }
 
-#loading > div > div {
+#loading>div>div {
   background-color: white;
   width: 0%;
   height: 20px;

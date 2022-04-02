@@ -6,16 +6,30 @@ import { Tile, Tileset } from "./Classes/tile.mjs";
 import World from "./Classes/world.mjs";
 import Player from "./Classes/player.mjs";
 
+const container = document.getElementById("container");
+
+const scale = Math.min(
+  Math.floor(window.innerWidth / 240),
+  Math.floor(window.innerHeight / 144)
+);
+
+container.style.width = `${240 * scale}px`;
+container.style.height = `${144 * scale}px`;
+
+console.debug("Canvas scale:", scale)
 // Load canvases
-var layers = {};
-let layersObj = document.getElementsByTagName("canvas");
+let layers = {};
+let layersObj = container.children;
 for (let i = 0; i < layersObj.length; i++) {
   let c = layersObj[i];
 
-  c.width = 240 + 16;
-  c.height = 144 + 16;
-  c.style.width = c.width * 4 + 'px';
-  c.style.height = c.height * 4 + 'px';
+  console.log(c.nodeName)
+  if (c.nodeName !== "CANVAS") { continue; }
+
+  c.width = 256;
+  c.height = 160;
+  c.style.width = c.width * scale + 'px';
+  c.style.height = c.height * scale + 'px';
 
   layers[c.getAttribute('layername')] = c.getContext('2d', {
     alpha: ((c.getAttribute('alpha') || null) == 'true')
@@ -23,7 +37,7 @@ for (let i = 0; i < layersObj.length; i++) {
 }
 
 // Load all needed tilesets
-var tilesets = {
+let tilesets = {
   sand: new Tileset(await loadImageAsync("./Assets/sand.png"), 16),
   grass: new Tileset(await loadImageAsync("./Assets/grass.png"), 16),
   water: new Tileset(await loadImageAsync("./Assets/water.png"), 16),
@@ -62,7 +76,7 @@ Tile.create({
   solid: true
 });
 
-var world = new World('worldname', 64, 64);
+let world = new World('worldname', 64, 64);
 
 await world.generate({
   scale: 0.02,
@@ -70,10 +84,10 @@ await world.generate({
 
   ocean: 0.5,
   sand: 0.55,
-  grass: 0.7,
+  grass: 0.6,
 });
 
-var player = new Player(
+let player = new Player(
   await loadImageAsync("./Assets/player.png"),
   32 * 16, 32 * 16
 );
@@ -87,18 +101,18 @@ function draw() {
       let x = dx + ~~Math.max(player.x / 16 - 7, 0);
       let y = dy + ~~Math.max(player.y / 16 - 4, 0);
 
-      //var tile = world.get(x, y);
       world.draw(layers.world, x, y, dx * 16, dy * 16);
     }
   }
 }
 
-draw()
+draw();
+Input.init(container);
 
-var prevX, prevY;
-
+let prevX, prevY;
 function loop(timestamp) {
   window.requestAnimationFrame(loop);
+  Input.update();
 
   player.update(layers.world.canvas, world, timestamp);
 
@@ -126,7 +140,6 @@ function loop(timestamp) {
   //Draw the player onscreen
   player.draw(layers.player, px, py);
 
-  // Clear input buffers
   Input.reset();
 }
 
