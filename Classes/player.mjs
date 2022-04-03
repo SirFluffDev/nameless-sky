@@ -61,8 +61,6 @@ export default class Player {
       this.cy = 0;
     }
 
-    console.log(this.cx, this.cy)
-
     if (Math.abs(this.cx) > 1) { this.x += ~~(this.cx); this.cx = this.cx % 1; }
     if (Math.abs(this.cy) > 1) { this.y += ~~(this.cy); this.cy = this.cy % 1; }
 
