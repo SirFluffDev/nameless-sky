@@ -112,7 +112,6 @@ Input.init(container);
 let prevX, prevY;
 function loop(timestamp) {
   window.requestAnimationFrame(loop);
-  Input.update();
 
   player.update(layers.world.canvas, world, timestamp);
 
@@ -140,7 +139,7 @@ function loop(timestamp) {
   //Draw the player onscreen
   player.draw(layers.player, px, py);
 
-  Input.reset();
+  Input.update();
 }
 
 window.requestAnimationFrame(loop);
