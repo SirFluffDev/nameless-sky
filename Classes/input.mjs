@@ -140,6 +140,13 @@ export function getJoystickVector(id) {
         if (deg > 210 && deg < 330) vector.y = -1;
       }
 
+      vector.normalize();
+
+      if (vector.x < 1 && vector.x > 0) vector.x = 0.8;
+      if (vector.x > -1 && vector.x < 0) vector.x = -0.8;
+      if (vector.y < 1 && vector.y > 0) vector.y = 0.8;
+      if (vector.y > -1 && vector.y < 0) vector.y = -0.8;
+
       return vector;
   }
 }

@@ -10,6 +10,8 @@ export default class Player {
   constructor(spritesheet, x = 0, y = 0) {
     this.x = x;
     this.y = y;
+    this.cx = 0;
+    this.cy = 0;
 
     // Movement variables
     this.speed = 1;
@@ -37,8 +39,8 @@ export default class Player {
 
     // Move player based off user input
     const joyVec = Input.getJoystickVector(0);
-    this.x += joyVec.x * this.speed;
-    this.y += joyVec.y * this.speed;
+    if (Math.abs(joyVec.x) < 1) { this.cx += joyVec.x; } else { this.x += joyVec.x * this.speed; }
+    if (Math.abs(joyVec.y) < 1) { this.cy += joyVec.y; } else { this.y += joyVec.y * this.speed; }
 
     // Update direction when the joystick has moved
     if (joyVec.x !== 0 || joyVec.y !== 0) {
@@ -52,6 +54,17 @@ export default class Player {
     } else {
       this.moving = false;
     }
+
+    // Make diagonal movement smooth
+    if (joyVec.x === 0 || joyVec.y === 0) {
+      this.cx = 0;
+      this.cy = 0;
+    }
+
+    console.log(this.cx, this.cy)
+
+    if (Math.abs(this.cx) > 1) { this.x += ~~(this.cx); this.cx = this.cx % 1; }
+    if (Math.abs(this.cy) > 1) { this.y += ~~(this.cy); this.cy = this.cy % 1; }
 
     // Apply friction to velocity
     this.xVel *= this.friction;
