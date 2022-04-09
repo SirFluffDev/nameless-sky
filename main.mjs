@@ -1,23 +1,35 @@
-import * as Input from "./Classes/input.mjs";
+// Establish global values
+import { config } from "./Classes/config.mjs";
 
-import { loadImageAsync } from "./Classes/utility.mjs";
-
-import { Tile, Tileset } from "./Classes/tile.mjs";
-import World from "./Classes/world.mjs";
-import Player from "./Classes/player.mjs";
-
-const container = document.getElementById("container");
-
-const scale = Math.min(
+config.set("scale", Math.min(
   Math.floor(window.innerWidth / 240),
   Math.floor(window.innerHeight / 144)
-);
+));
 
-container.style.width = `${240 * scale}px`;
-container.style.height = `${144 * scale}px`;
+config.set("tileSize", 16);
 
-console.debug("Canvas scale:", scale)
-// Load canvases
+const SCALE = config.get("scale");
+const TILE_SIZE = config.get("tileSize");
+
+// Dyanmically import the other needed modules
+const Input = await import("./Classes/input.mjs");
+const Utility = await import("./Classes/utility.mjs");
+
+const World = (await import("./Classes/world.mjs")).default;
+const Player = (await import("./Classes/player.mjs")).default;
+
+const { Tile, Tileset } = await import("./Classes/tile.mjs");
+
+// Adjust the game scale to best fit the current screen
+const container = document.getElementById("container");
+
+console.log(config);
+
+container.style.width = `${240 * SCALE}px`;
+container.style.height = `${144 * SCALE}px`;
+
+console.debug("Canvas scale:", SCALE)
+// Load all canvases into a layer object
 let layers = {};
 let layersObj = container.children;
 for (let i = 0; i < layersObj.length; i++) {
@@ -28,8 +40,8 @@ for (let i = 0; i < layersObj.length; i++) {
 
   c.width = 256;
   c.height = 160;
-  c.style.width = c.width * scale + 'px';
-  c.style.height = c.height * scale + 'px';
+  c.style.width = c.width * SCALE + 'px';
+  c.style.height = c.height * SCALE + 'px';
 
   layers[c.getAttribute('layername')] = c.getContext('2d', {
     alpha: ((c.getAttribute('alpha') || null) == 'true')
@@ -38,10 +50,10 @@ for (let i = 0; i < layersObj.length; i++) {
 
 // Load all needed tilesets
 let tilesets = {
-  sand: new Tileset(await loadImageAsync("./Assets/sand.png"), 16),
-  grass: new Tileset(await loadImageAsync("./Assets/grass.png"), 16),
-  water: new Tileset(await loadImageAsync("./Assets/water.png"), 16),
-  stone: new Tileset(await loadImageAsync("./Assets/stone.png"), 16)
+  sand: new Tileset(await Utility.loadImageAsync("./Assets/sand.png"), TILE_SIZE),
+  grass: new Tileset(await Utility.loadImageAsync("./Assets/grass.png"), TILE_SIZE),
+  water: new Tileset(await Utility.loadImageAsync("./Assets/water.png"), TILE_SIZE),
+  stone: new Tileset(await Utility.loadImageAsync("./Assets/stone.png"), TILE_SIZE)
 }
 
 Tile.create({
@@ -88,7 +100,7 @@ await world.generate({
 });
 
 let player = new Player(
-  await loadImageAsync("./Assets/player.png"),
+  await Utility.loadImageAsync("./Assets/player.png"),
   32 * 16, 32 * 16
 );
 

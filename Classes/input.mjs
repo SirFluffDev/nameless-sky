@@ -106,10 +106,10 @@ export function getJoystickVector(id) {
         // Get the degree angle of the stick and get a direction from it
         let deg = joystick.toDegrees();
 
-        if (deg < 60 || deg > 300) vector.x = 1;
-        if (deg > 120 && deg < 240) vector.x = -1;
-        if (deg > 30 && deg < 150) vector.y = 1;
-        if (deg > 210 && deg < 330) vector.y = -1;
+        if (deg < 45 || deg >= 315) vector.x = 1;
+        if (deg >= 135 && deg < 225) vector.x = -1;
+        if (deg >= 45 && deg < 135) vector.y = 1;
+        if (deg >= 225 && deg < 315) vector.y = -1;
       }
 
       // Keyboard input
@@ -118,7 +118,7 @@ export function getJoystickVector(id) {
           ((keyboard.keys.includes("KeyD") || keyboard.keys.includes("ArrowRight")) | 0) -
           ((keyboard.keys.includes("KeyA") || keyboard.keys.includes("ArrowLeft")) | 0);
 
-        vector.y =
+        if (!vector.x) vector.y =
           ((keyboard.keys.includes("KeyS") || keyboard.keys.includes("ArrowDown")) | 0) -
           ((keyboard.keys.includes("KeyW") || keyboard.keys.includes("ArrowUp")) | 0);
       }
@@ -134,18 +134,11 @@ export function getJoystickVector(id) {
         let deg = tVec.toDegrees();
 
         // Get a direction from the angle
-        if (deg < 60 || deg > 300) vector.x = 1;
-        if (deg > 120 && deg < 240) vector.x = -1;
-        if (deg > 30 && deg < 150) vector.y = 1;
-        if (deg > 210 && deg < 330) vector.y = -1;
+        if (deg < 45 || deg >= 315) vector.x = 1;
+        if (deg >= 135 && deg < 225) vector.x = -1;
+        if (deg >= 45 && deg < 135) vector.y = 1;
+        if (deg >= 225 && deg < 315) vector.y = -1;
       }
-
-      vector.normalize();
-
-      if (vector.x < 1 && vector.x > 0) vector.x = 0.8;
-      if (vector.x > -1 && vector.x < 0) vector.x = -0.8;
-      if (vector.y < 1 && vector.y > 0) vector.y = 0.8;
-      if (vector.y > -1 && vector.y < 0) vector.y = -0.8;
 
       return vector;
   }

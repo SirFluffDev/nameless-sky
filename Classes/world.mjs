@@ -14,13 +14,13 @@ export default class World {
    * @param {Number} width - The world's width in tiles
    * @param {Number} height - The world's height in tiles
   */
+  data = [];
+
   constructor(name, width, height) {
     this.name = name;
 
     this.width = width;
     this.height = height;
-
-    this.data = [];
   }
 
   /** 
