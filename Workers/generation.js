@@ -1,7 +1,7 @@
 console.debug("Worker created!");
 
 // Load in the Perlin module //
-self.importScripts('../Classes/Static/perlin.js');
+self.importScripts('../Classes/perlin.js');
 
 onmessage = function (e) {
   let settings = e.data[0];
@@ -30,7 +30,7 @@ onmessage = function (e) {
       else if (p > settings.ocean && p <= settings.sand) {
         cur = {
           id: 2,
-          dec: Math.round(Math.random() * 0.55) * ~~(Math.random() * 3)
+          dec: Math.round(Math.random() * 0.55) * ~~(Math.random() * 4)
         };
       }
 

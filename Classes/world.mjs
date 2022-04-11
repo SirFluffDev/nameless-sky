@@ -16,13 +16,29 @@ export default class World {
   */
   data = [];
 
-  constructor(name, width, height) {
+  constructor(name, width, height, tileset) {
     this.name = name;
 
     this.width = width;
     this.height = height;
+
+    this.tileset = tileset;
   }
 
+  /**
+   * Returns a tile from world coordinates
+   * @param {*} x - X coordinate
+   * @param {*} y - Y coordinate
+   * @returns {Object} The tile object at the given coordinates
+   */
+  get(x, y) {
+    if ((this.data[y] || [])[x])
+      return this.data[y][x];
+    else
+      return { id: 0, dec: 0 };
+  }
+
+  //#region - World generation
   /** 
    * Fill the world array with islands, using perlin noise and web workers
    * @param {Object} settings - An object containing the neccesary world settings
@@ -49,7 +65,7 @@ export default class World {
       generationWorker.onmessage = function (e) {
         if (e.data[0] == 'data') {
           loadingScreen.setAttribute('hidden', true);
-          console.log(`Finished loading in ${performance.now() - start}ms`)
+          console.log(`Finished generating in ${performance.now() - start}ms`)
 
           self.data = e.data[1];
 
@@ -62,21 +78,10 @@ export default class World {
       }
     })
   }
+  //#endregion
 
-  /**
-   * Fetches a tile from the world using x any y coordinates.
-   * If the tile does not exist, an empty ocean tile is returned
-   * @param {Number} x 
-   * @param {Number} y
-   */
-  get(x, y) {
-    if ((this.data[y] || [])[x])
-      return this.data[y][x];
-    else
-      return { id: 0, dec: 0 };
-  }
-
-  draw(ctx, x, y, dx, dy) {
+  //#region - Drawing
+  draw(ctx, ctx2, x, y, dx, dy) {
     let tile = this.get(x, y);
 
     // If the tileset/tile is missing, draw an error texure and cancel the function
@@ -88,29 +93,23 @@ export default class World {
 
     // Get all needed tile information
     let tileType = Tile.types[tile.id];
-    let tileset = tileType.tileset;
     let merge = Tile.id[tileType.merge];
 
+    let coords = [];
 
     // Drawing walls
     let below = Tile.types[this.get(x, y + 1).id];
     if (below.solid) {
-      below.tileset.drawTile(ctx, 3, 0, dx, dy); return;
+      this.tileset.drawTile(ctx2, 3, 0, dx, dy, below.atlas); return;
     } else if (tileType.solid) {
-      if (this.checkWalls([1, 1], x, y))
-        tileset.drawTile(ctx, 1, 0, dx, dy);
+      if (this.checkWalls([1, 1], x, y)) coords = [1, 0];
+      if (this.checkWalls([0, 1], x, y)) coords = [0, 0];
+      if (this.checkWalls([1, 0], x, y)) coords = [2, 0];
 
-      if (this.checkWalls([0, 1], x, y))
-        tileset.drawTile(ctx, 0, 0, dx, dy);
-
-      if (this.checkWalls([1, 0], x, y))
-        tileset.drawTile(ctx, 2, 0, dx, dy);
+      this.tileset.drawTile(ctx, coords[0], coords[1], dx, dy, tileType.atlas);
 
       return;
     }
-
-    // Drawing normal tiles //
-    let coords = [];
 
     // Full block
     if (this.check([0, 0, 0, 0], merge, x, y)) {
@@ -177,7 +176,7 @@ export default class World {
     if (this.check([1, 1, 1, 1], merge, x, y))
       coords = [3, 3]
 
-    tileset.drawTile(ctx, coords[0], coords[1], dx, dy);
+    this.tileset.drawTile(ctx, coords[0], coords[1], dx, dy, tileType.atlas);
   }
 
   check(arr, t, x, y) {
@@ -196,4 +195,5 @@ export default class World {
       (Tile.types[this.get(x + 1, y).id].solid) == arr[1]
     );
   }
+  //#endregion
 }

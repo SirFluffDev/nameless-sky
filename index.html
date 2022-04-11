@@ -10,6 +10,7 @@
   <div id="container">
     <canvas layername="world" alpha=false></canvas>
     <canvas layername="player" alpha=true></canvas>
+    <canvas layername="top" alpha=true></canvas>
   </div>
 
   <div id="loading">
@@ -18,6 +19,17 @@
       <div></div>
     </div>
   </div>
+
+  <script type="module">
+    window["game"] = {
+      SCALE: Math.min(
+        Math.floor(window.innerWidth / 240),
+        Math.floor(window.innerHeight / 144)
+      ),
+
+      TILE_SIZE: 16
+    };
+  </script>
 
   <script src="./main.mjs" type="module"></script>
 </body>

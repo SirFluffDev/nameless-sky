@@ -8,7 +8,7 @@ class Tile {
    * @param {object} properties - The Tile's properties
    * 
    * @param {string} properties.name - The tile's name
-   * @param {Tileset} properties.tileset - The tileset used for the tile
+   * @param {Array} properties.atlas - The x and y location on the sprite atlas
    * @param {number} properties.decs - The amount of tile variations that can be used
    * @param {string} properties.merge - The type of tile it connects to
    * @param {boolean} properties.solid - How the tile is treated (Flooring, walls, etc.)
@@ -25,10 +25,10 @@ class Tileset {
     this.res = res;
   }
 
-  drawTile(ctx, tileX, tileY, dx, dy) {
+  drawTile(ctx, tileX, tileY, dx, dy, atlas) {
     ctx.drawImage(
       this.img,
-      tileX * this.res, tileY * this.res, this.res, this.res,
+      (tileX + (atlas[0] * 4)) * this.res, (tileY + (atlas[1] * 6)) * this.res, this.res, this.res,
       dx, dy, this.res, this.res
     );
   }

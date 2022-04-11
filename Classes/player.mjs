@@ -1,15 +1,14 @@
-import { config } from "./config.mjs";
-
 import * as Input from "./input.mjs";
 import { Tile } from "./tile.mjs";
 
+// Load global variables
 const
-  SCALE = config.get("scale"),
-  TILE_SIZE = config.get("tileSize");
+  TILE_SIZE = window['game'].TILE_SIZE,
+  SCALE = window['game'].SCALE;
 
 /**
  * A simple class used to manage a player
- * @param {Image} spritesheet - The spritesheet to use for the player
+ * @property {Number} speed - The player's speed multiplier
  */
 export default class Player {
   direction = 0;
@@ -24,7 +23,7 @@ export default class Player {
   moving = false;
 
   /**
-   * 
+   * Create a new player
    * @param {*} spritesheet - The spritesheet to use for the player
    * @param {number} x - The spawning X position of the player
    * @param {number} y - The spawning Y position of the player
@@ -40,11 +39,12 @@ export default class Player {
 
   /**
    * Update all the player's information, and adjust the screen offset
-   * @param {HTMLCanvasElement} canvas 
+   * @param {HTMLCanvasElement} canvas1
+   * @param {HTMLCanvasElement} canvas2
    * @param {World} world 
    * @param {DOMHighResTimeStamp} timestamp 
    */
-  update(canvas, world, timestamp) {
+  update(canvas1, canvas2, world, timestamp) {
     this.timestamp = timestamp;
 
     // Cache previous position
@@ -120,56 +120,26 @@ export default class Player {
 
     //#endregion
 
-    //#region - Collision test
-
-
-    /*let bottomLeft = Tile.types[world.get(~~((this.x) / 16), ~~((this.y + 15) / 16)).id];
-    let bottomRight = Tile.types[world.get(~~((this.x + 15) / 16), ~~((this.y + 15) / 16)).id];
-
-    // Moving down
-    if (moving.down) {
-      if (bottomLeft.solid || bottomRight.solid) {
-        this.y = Math.floor(this.y / 16) * 16;
-      };
-    }
-
-    // Moving up
-    if (moving.up) {
-      if (bottomLeft.solid || bottomRight.solid) {
-        this.y = Math.floor(this.y / 16) * 16 + 1;
-      };
-    }
-
-    // Moving right
-    if (moving.right) {
-      if (Tile.types[world.get(~~((this.x + 16) / 16), ~~((this.y + 15) / 16)).id].solid) {
-        this.x = Math.floor(this.x / 16) * 16;
-      };
-    }
-
-    // Moving left
-    if (moving.left) {
-      if (Tile.types[world.get(~~((this.x) / 16), ~~((this.y + 15) / 16)).id].solid) {
-        this.x = Math.floor(this.x / 16) * 16 + 16;
-      };
-    }*/
-
-    //#endregion
-
     // Stop player from crossing the world border
     this.x = Math.max(this.x, 0);
     this.y = Math.max(this.y, 0);
 
     // Offset the world based on player position
-    if (this.x > 7 * TILE_SIZE)
-      canvas.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
-    else
-      canvas.style.left = 0;
+    if (this.x > 7 * TILE_SIZE) {
+      canvas1.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
+      canvas2.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
+    } else {
+      canvas1.style.left = 0;
+      canvas2.style.left = 0;
+    }
 
-    if (this.y >= 4 * TILE_SIZE)
-      canvas.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
-    else
-      canvas.style.top = 0;
+    if (this.y >= 4 * TILE_SIZE) {
+      canvas1.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
+      canvas2.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
+    } else {
+      canvas1.style.top = 0;
+      canvas2.style.top = 0;
+    }
   }
 
   // Draw and animate the player onscreen

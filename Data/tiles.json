@@ -1,0 +1,38 @@
+[
+  {
+    "name": "water",
+    "merge": "grass",
+    "solid": false,
+    "atlas": [
+      0,
+      0
+    ]
+  },
+  {
+    "name": "grass",
+    "merge": "sand",
+    "solid": false,
+    "atlas": [
+      1,
+      0
+    ]
+  },
+  {
+    "name": "sand",
+    "merge": "water",
+    "solid": false,
+    "atlas": [
+      2,
+      0
+    ]
+  },
+  {
+    "name": "stone",
+    "merge": "grass",
+    "solid": true,
+    "atlas": [
+      3,
+      0
+    ]
+  }
+]

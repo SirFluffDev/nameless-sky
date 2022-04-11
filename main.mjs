@@ -1,41 +1,30 @@
-// Establish global values
-import { config } from "./Classes/config.mjs";
+// Import all needed modules
+import * as Input from "./Classes/input.mjs";
+import * as Utility from "./Classes/utility.mjs";
 
-config.set("scale", Math.min(
-  Math.floor(window.innerWidth / 240),
-  Math.floor(window.innerHeight / 144)
-));
+import World from "./Classes/world.mjs";
+import Player from "./Classes/player.mjs";
 
-config.set("tileSize", 16);
+import { Tile, Tileset } from "./Classes/tile.mjs";
 
-const SCALE = config.get("scale");
-const TILE_SIZE = config.get("tileSize");
+// Save global values for convenience
+const
+  TILE_SIZE = window['game'].TILE_SIZE,
+  SCALE = window['game'].SCALE;
 
-// Dyanmically import the other needed modules
-const Input = await import("./Classes/input.mjs");
-const Utility = await import("./Classes/utility.mjs");
-
-const World = (await import("./Classes/world.mjs")).default;
-const Player = (await import("./Classes/player.mjs")).default;
-
-const { Tile, Tileset } = await import("./Classes/tile.mjs");
-
-// Adjust the game scale to best fit the current screen
+// Scale the canvas to best fit the screen
 const container = document.getElementById("container");
-
-console.log(config);
 
 container.style.width = `${240 * SCALE}px`;
 container.style.height = `${144 * SCALE}px`;
 
-console.debug("Canvas scale:", SCALE)
+console.debug("Canvas scale -", SCALE)
 // Load all canvases into a layer object
 let layers = {};
 let layersObj = container.children;
 for (let i = 0; i < layersObj.length; i++) {
   let c = layersObj[i];
 
-  console.log(c.nodeName)
   if (c.nodeName !== "CANVAS") { continue; }
 
   c.width = 256;
@@ -47,48 +36,17 @@ for (let i = 0; i < layersObj.length; i++) {
     alpha: ((c.getAttribute('alpha') || null) == 'true')
   });
 }
-
-// Load all needed tilesets
-let tilesets = {
-  sand: new Tileset(await Utility.loadImageAsync("./Assets/sand.png"), TILE_SIZE),
-  grass: new Tileset(await Utility.loadImageAsync("./Assets/grass.png"), TILE_SIZE),
-  water: new Tileset(await Utility.loadImageAsync("./Assets/water.png"), TILE_SIZE),
-  stone: new Tileset(await Utility.loadImageAsync("./Assets/stone.png"), TILE_SIZE)
+// Load all tile types
+const tileData = await (await fetch("./Data/tiles.json")).json();
+for (let i = 0; i < tileData.length; i++) {
+  Tile.create(tileData[i]);
 }
 
-Tile.create({
-  name: 'water',
-  merge: 'grass',
-  tileset: tilesets.water,
-
-  solid: false
-});
-
-Tile.create({
-  name: 'grass',
-  merge: 'sand',
-  tileset: tilesets.grass,
-
-  solid: false
-});
-
-Tile.create({
-  name: 'sand',
-  merge: 'water',
-  tileset: tilesets.sand,
-
-  solid: false
-});
-
-Tile.create({
-  name: 'stone',
-  merge: 'grass',
-  tileset: tilesets.stone,
-
-  solid: true
-});
-
-let world = new World('worldname', 64, 64);
+// World creation
+let world = new World(
+  'worldname', 64, 64,
+  new Tileset(await Utility.loadImageAsync("./Assets/tileset.png"), TILE_SIZE)
+);
 
 await world.generate({
   scale: 0.02,
@@ -104,16 +62,16 @@ let player = new Player(
   32 * 16, 32 * 16
 );
 
-// Display the generated snippet of world
+// Draw the world
 function draw() {
-  layers.world.clearRect(0, 0, layers.world.canvas.width, layers.world.canvas.height);
+  layers.top.clearRect(0, 0, layers.world.canvas.width, layers.world.canvas.height);
 
   for (let dy = 0; dy < 8 + 2; dy++) {
     for (let dx = 0; dx < 16 + 1; dx++) {
       let x = dx + ~~Math.max(player.x / 16 - 7, 0);
       let y = dy + ~~Math.max(player.y / 16 - 4, 0);
 
-      world.draw(layers.world, x, y, dx * 16, dy * 16);
+      world.draw(layers.world, layers.top, x, y, dx * 16, dy * 16);
     }
   }
 }
@@ -125,7 +83,10 @@ let prevX, prevY;
 function loop(timestamp) {
   window.requestAnimationFrame(loop);
 
-  player.update(layers.world.canvas, world, timestamp);
+  player.update(
+    layers.world.canvas, layers.top.canvas,
+    world, timestamp
+  );
 
   // Re-draw the world if the player moves a tile
   if (
@@ -137,7 +98,7 @@ function loop(timestamp) {
   }
 
   // Clear the entity canvas
-  layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height)
+  layers.player.clearRect(0, 0, layers.player.canvas.width, layers.player.canvas.height);
 
   // Draw the player in the correct position
   let px, py;
