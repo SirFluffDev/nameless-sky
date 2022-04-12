@@ -25,10 +25,10 @@ class Tileset {
     this.res = res;
   }
 
-  drawTile(ctx, tileX, tileY, dx, dy, atlas) {
+  drawTile(ctx, tileX, tileY, dx, dy, id) {
     ctx.drawImage(
       this.img,
-      (tileX + (atlas[0] * 4)) * this.res, (tileY + (atlas[1] * 6)) * this.res, this.res, this.res,
+      (tileX + (id * 4)) * this.res, tileY * this.res, this.res, this.res,
       dx, dy, this.res, this.res
     );
   }

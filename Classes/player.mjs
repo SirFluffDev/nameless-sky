@@ -11,6 +11,7 @@ const
  * @property {Number} speed - The player's speed multiplier
  */
 export default class Player {
+  // Movement //
   direction = 0;
   timestamp = 0;
 
@@ -21,6 +22,10 @@ export default class Player {
 
   speed = 1;
   moving = false;
+
+  inventory = {
+    selectedSlot: 0
+  }
 
   /**
    * Create a new player
@@ -143,14 +148,12 @@ export default class Player {
   }
 
   // Draw and animate the player onscreen
-  draw(ctx, px, py) {
-    let dx = this.moving ? ~~((this.timestamp - this.animationStart) / (175 / this.speed)) % 2 + 1 : 0;
+  draw(ctx, px, py, world) {
+    const dx = this.moving ? ~~((this.timestamp - this.animationStart) / (175 / this.speed)) % 2 + 1 : 0;
 
     ctx.drawImage(
       this.spritesheet,
-
       dx * 16, this.direction * 16, 16, 16,
-
       px, py, 16, 16
     );
   }
