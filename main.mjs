@@ -1,3 +1,6 @@
+// Set everything up
+import "./init.mjs";
+
 // Import all needed modules
 import * as Input from "./Classes/input.mjs";
 import * as Utility from "./Classes/utility.mjs";
@@ -9,32 +12,8 @@ import { Tile, Tileset } from "./Classes/tile.mjs";
 
 // Save global values for convenience
 const
-  TILE_SIZE = window['game'].TILE_SIZE,
-  SCALE = window['game'].SCALE;
-
-// Scale the canvas to best fit the screen
-const container = document.getElementById("container");
-
-container.style.width = `${240 * SCALE}px`;
-container.style.height = `${144 * SCALE}px`;
-
-// Load all canvases into a layer object
-let layer = {};
-let layersObj = container.children;
-for (let i = 0; i < layersObj.length; i++) {
-  let c = layersObj[i];
-
-  if (c.nodeName !== "CANVAS") { continue; }
-
-  c.width = 256;
-  c.height = 160;
-  c.style.width = c.width * SCALE + 'px';
-  c.style.height = c.height * SCALE + 'px';
-
-  layer[c.getAttribute('layername')] = c.getContext('2d', {
-    alpha: ((c.getAttribute('alpha') || null) == 'true')
-  });
-}
+  LAYERS = window['game'].LAYERS,
+  TILE_SIZE = window['game'].TILE_SIZE;
 
 // Load UI images
 const UI_Sheet = await Utility.loadImageAsync("./Assets/ui.png");
@@ -67,23 +46,25 @@ let player = new Player(
 
 // Draw the world
 function draw() {
-  layer.top.clearRect(0, 0, layer.world.canvas.width, layer.world.canvas.height);
+  LAYERS.top.clear();
 
   for (let dy = 0; dy < 8 + 2; dy++) {
     for (let dx = 0; dx < 16 + 1; dx++) {
       let x = dx + ~~Math.max(player.x / 16 - 7, 0);
       let y = dy + ~~Math.max(player.y / 16 - 4, 0);
 
-      world.draw(layer.world, layer.top, x, y, dx * 16, dy * 16);
+      world.draw(x, y, dx * 16, dy * 16);
     }
   }
 }
 
-for (let i = 0; i < 10; i++) {
-  layer.UI.drawImage(UI_Sheet, 0, 0, 8, 8, 2 + i * 8, 2, 8, 8);
-  layer.UI.drawImage(UI_Sheet, 0, 8, 8, 8, layer.UI.canvas.width - 107 + i * 9, 2, 8, 8);
+function updateUI() {
+  for (let i = 0; i < 10; i++) {
+    LAYERS.UI.drawImage(UI_Sheet, 0, 0, 8, 8, 2 + i * 8, 2, 8, 8);
+    LAYERS.UI.drawImage(UI_Sheet, 0, 8, 8, 8, LAYERS.UI.canvas.width - 107 + i * 9, 2, 8, 8);
 
-  layer.UI.drawImage(UI_Sheet, (i === 2 ? 16 : 0), 16, 16, 16, 2 + i * 17, layer.UI.canvas.height - 18 - 16, 16, 16);
+    LAYERS.UI.drawImage(UI_Sheet, (i === 2 ? 16 : 0), 16, 16, 16, 2 + i * 17, LAYERS.UI.canvas.height - 18 - 16, 16, 16);
+  }
 }
 
 draw();
@@ -95,7 +76,7 @@ function loop(timestamp) {
 
   // Run all player related code
   player.update(
-    layer.world.canvas, layer.top.canvas,
+    LAYERS.world.canvas, LAYERS.top.canvas,
     world, timestamp
   );
 
@@ -109,7 +90,7 @@ function loop(timestamp) {
   }
 
   // Clear the entity canvas
-  layer.entities.clearRect(0, 0, layer.entities.canvas.width, layer.entities.canvas.height);
+  LAYERS.entities.clear();
 
   // Draw the player in the correct position
   let px, py;
@@ -121,7 +102,7 @@ function loop(timestamp) {
   prevY = ~~Math.max(player.y / 16, 0);
 
   //Draw the player onscreen
-  player.draw(layer.entities, px, py, world);
+  player.draw(LAYERS.entities, px, py, world);
 
   Input.update();
 }

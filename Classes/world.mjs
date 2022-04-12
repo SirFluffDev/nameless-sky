@@ -6,6 +6,10 @@ const
   loadingScreen = document.getElementById("loading"),
   loadingBar = loadingScreen.children[0].children[0];
 
+const
+  bottomLayer = window['game'].LAYERS.world,
+  topLayer = window['game'].LAYERS.top;
+
 /**
  * A simple class used to create and store arrays of tiles
  */
@@ -54,7 +58,7 @@ export default class World {
    * @param {Number} settings.grass - The threshold for grass generation
    */
   async generate(settings) {
-    let self = this;
+    const self = this;
     loadingScreen.childNodes[0].nodeValue = `Generating world (${this.width} x ${this.height})`;
 
     return new Promise((resolve, reject) => {
@@ -84,13 +88,13 @@ export default class World {
   //#endregion
 
   //#region - Drawing
-  draw(ctx, ctx2, x, y, dx, dy) {
+  draw(x, y, dx, dy) {
     const tile = this.get(x, y);
 
     // If the tileset/tile is missing, draw an error texure and cancel the function
     if (!Tile.types[tile.id]) {
-      ctx.fillStyle = "#ff00ff";
-      ctx.fillRect(dx, dy, 16, 16);
+      bottomLayer.fillStyle = "#ff00ff";
+      bottomLayer.fillRect(dx, dy, 16, 16);
       return;
     }
 
@@ -105,13 +109,13 @@ export default class World {
     let below = this.get(x, y + 1);
 
     if (Tile.types[below.id].solid) {
-      this.tileset.drawTile(ctx2, 3, 0, dx, dy, below.id); return;
+      this.tileset.drawTile(topLayer, 3, 0, dx, dy, below.id); return;
     } else if (tileType.solid) {
       if (this.checkWalls([1, 1], x, y)) coords = [1, 0];
       if (this.checkWalls([0, 1], x, y)) coords = [0, 0];
       if (this.checkWalls([1, 0], x, y)) coords = [2, 0];
 
-      this.tileset.drawTile(ctx, coords[0], coords[1], dx, dy, tile.id);
+      this.tileset.drawTile(bottomLayer, coords[0], coords[1], dx, dy, tile.id);
 
       return;
     }
@@ -181,7 +185,7 @@ export default class World {
     if (this.check([1, 1, 1, 1], merge, x, y))
       coords = [3, 3]
 
-    this.tileset.drawTile(ctx, coords[0], coords[1], dx, dy, tile.id);
+    this.tileset.drawTile(bottomLayer, coords[0], coords[1], dx, dy, tile.id);
   }
 
   check(arr, t, x, y) {

@@ -41,8 +41,8 @@ document.addEventListener("touchstart", (e) => {
     touch.tapped = true;
 
     const rect = e.target.getBoundingClientRect();
-    touch.x = e.touches[0].clientX - rect.left;
-    touch.y = e.touches[0].clientY - rect.top;
+    touch.x = e.touches[e.touches.length - 1].clientX - rect.left;
+    touch.y = e.touches[e.touches.length - 1].clientY - rect.top;
   }
 
   e.preventDefault();
@@ -51,15 +51,15 @@ document.addEventListener("touchstart", (e) => {
 document.addEventListener("touchmove", (e) => {
   if (e.target.nodeName === "CANVAS") {
     const rect = e.target.getBoundingClientRect();
-    touch.x = e.touches[0].clientX - rect.left;
-    touch.y = e.touches[0].clientY - rect.top;
+    touch.x = e.touches[e.touches.length - 1].clientX - rect.left;
+    touch.y = e.touches[e.touches.length - 1].clientY - rect.top;
   }
 
   e.preventDefault();
 });
 
 document.addEventListener("touchend", (e) => {
-  touch.touching = false;
+  if (e.touches.length === 0) touch.touching = false;
   e.preventDefault();
 });
 //#endregion
@@ -144,9 +144,10 @@ export function getJoystickVector(id) {
   }
 }
 
-export function init(c) {
-  cw = parseInt(c.style.width, 10);
-  ch = parseInt(c.style.height, 10);
+export function init() {
+  const container = window['game'].CONTAINER;
+  cw = parseInt(container.style.width, 10);
+  ch = parseInt(container.style.height, 10);
 }
 
 export function update() {
