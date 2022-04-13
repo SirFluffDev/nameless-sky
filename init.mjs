@@ -1,3 +1,5 @@
+import { loadImageAsync } from "./Classes/utility.mjs";
+
 console.log("Initializing...")
 
 // Get the canvas scale
@@ -27,11 +29,19 @@ for (let i = 0; i < layersObj.length; i++) {
   c.style.width = c.width * SCALE + 'px';
   c.style.height = c.height * SCALE + 'px';
 
+  const name = c.getAttribute('layername');
+  const alpha = ((c.getAttribute('alpha') || null) == 'true');
+
   // Add canvas context to layer array
-  layers[c.getAttribute('layername')] = c.getContext('2d', {
-    alpha: ((c.getAttribute('alpha') || null) == 'true')
+  layers[name] = c.getContext('2d', {
+    alpha: alpha
   });
 }
+
+layers.UI.font = '4px pixel';
+layers.UI.fillText("I am a block of text!", 10, 10);
+
+console.debug("Loaded all layers");
 
 // Save global values
 window['game'] = {
@@ -41,3 +51,4 @@ window['game'] = {
   CONTAINER: container
 };
 
+console.debug("...Initialized!");

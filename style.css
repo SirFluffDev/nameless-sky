@@ -3,11 +3,19 @@
   height: 100%
 }
 
+@font-face {
+  font-family: 'pixel';
+  src: url('./Assets/4x4-font.ttf');
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: black;
   overflow: hidden;
+
+  font-family: 'pixel', monospace;
+  font-size: 16px;
 }
 
 #container>canvas {
@@ -40,7 +48,7 @@ body {
   text-align: center;
 
   color: white;
-  font-family: 'Courier New', Courier, monospace;
+  /*font-family: 'Courier New', Courier, monospace;*/
 
   /* Center vertically and horizontally */
   margin: 0;

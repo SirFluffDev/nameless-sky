@@ -15,9 +15,6 @@ const
   LAYERS = window['game'].LAYERS,
   TILE_SIZE = window['game'].TILE_SIZE;
 
-// Load UI images
-const UI_Sheet = await Utility.loadImageAsync("./Assets/ui.png");
-
 // Load all tile types
 const tileData = await (await fetch("./Data/tiles.json")).json();
 for (let i = 0; i < tileData.length; i++) {
@@ -55,15 +52,6 @@ function draw() {
 
       world.draw(x, y, dx * 16, dy * 16);
     }
-  }
-}
-
-function updateUI() {
-  for (let i = 0; i < 10; i++) {
-    LAYERS.UI.drawImage(UI_Sheet, 0, 0, 8, 8, 2 + i * 8, 2, 8, 8);
-    LAYERS.UI.drawImage(UI_Sheet, 0, 8, 8, 8, LAYERS.UI.canvas.width - 107 + i * 9, 2, 8, 8);
-
-    LAYERS.UI.drawImage(UI_Sheet, (i === 2 ? 16 : 0), 16, 16, 16, 2 + i * 17, LAYERS.UI.canvas.height - 18 - 16, 16, 16);
   }
 }
 

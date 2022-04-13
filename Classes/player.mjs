@@ -1,10 +1,44 @@
 import * as Input from "./input.mjs";
 import { Tile } from "./tile.mjs";
 
+import * as Utility from "./utility.mjs";
+
 // Load global variables
 const
   TILE_SIZE = window['game'].TILE_SIZE,
   SCALE = window['game'].SCALE;
+
+//#region - UI
+
+// Load UI assets
+const UI_Sheet = await Utility.loadImageAsync("./Assets/ui.png");
+const UI_LAYER = window['game'].LAYERS.UI;
+
+class Item {
+  constructor(id, count = 1) {
+    this.id = id;
+    this.count = count;
+  }
+}
+
+class Inventory {
+  slots = 9;
+  items = [];
+
+  constructor() {
+
+  }
+}
+
+function updateUI(s) {
+  for (let i = 0; i < 10; i++) {
+    UI_LAYER.drawImage(UI_Sheet, 0, 0, 8, 8, 2 + i * 8, 2, 8, 8);
+    UI_LAYER.drawImage(UI_Sheet, 0, 8, 8, 8, UI_LAYER.canvas.width - 107 + i * 9, 2, 8, 8);
+
+    UI_LAYER.drawImage(UI_Sheet, (i === s ? 16 : 0), 16, 16, 16, 2 + i * 17, UI_LAYER.canvas.height - 18 - 16, 16, 16);
+  }
+}
+//#endregion
 
 /**
  * A simple class used to manage a player
@@ -51,6 +85,11 @@ export default class Player {
    */
   update(canvas1, canvas2, world, timestamp) {
     this.timestamp = timestamp;
+
+    if (Input.mouse.wheel !== 0) {
+      this.inventory.selectedSlot = Math.max(Math.min(this.inventory.selectedSlot + Input.mouse.wheel, 9), 0);
+      updateUI(this.inventory.selectedSlot);
+    }
 
     // Cache previous position
     let xVel = 0, yVel = 0;

@@ -59,7 +59,7 @@ export default class World {
    */
   async generate(settings) {
     const self = this;
-    loadingScreen.childNodes[0].nodeValue = `Generating world (${this.width} x ${this.height})`;
+    loadingScreen.childNodes[0].nodeValue = `Generating world...`;
 
     return new Promise((resolve, reject) => {
       let start = performance.now()

@@ -5,13 +5,17 @@ let cw, ch;
 //#region - Mouse input
 let mouse = {
   x: 0,
-  y: 0
+  y: 0,
+  wheel: 0
 };
 
 document.addEventListener("mousemove", (e) => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
 });
+
+document.addEventListener("wheel", (e) => { mouse.wheel = e.deltaY > 0 ? 1 : -1 });
+
 //#endregion
 
 //#region - Keyboard input
@@ -153,4 +157,7 @@ export function init() {
 export function update() {
   touch.tapped = false;
   keyboard.pressed = [];
+  mouse.wheel = 0;
 }
+
+export { mouse };
