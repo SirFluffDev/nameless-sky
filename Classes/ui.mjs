@@ -17,9 +17,40 @@ CTX.font = '4px pixel';
  * @param {Player} player - The player object to update the UI with
  */
 export function update(player) {
-  for (let i = 0; i < 10; i++) {
-    CTX.drawImage(UI_SHEET, 0, 0, 8, 8, 2 + i * 8, 2, 8, 8);
-    CTX.drawImage(UI_SHEET, 0, 8, 8, 8, 2 + i * 8, 10, 8, 8);
+  switch (SETTINGS.statDisplay) {
+    case "symbols":
+      for (let i = 0; i < player.maxHealth / 2; i++) {
+        CTX.drawImage(
+          UI_SHEET,
+          (player.health - i * 2 === 1) ? 8 : (i * 2 >= player.health ? 16 : 0),
+          0, 8, 8, 2 + i * 8, 2, 8, 8
+        );
+      }
+
+      for (let i = 0; i < player.maxHunger / 2; i++) {
+        CTX.drawImage(
+          UI_SHEET,
+          (player.hunger - i * 2 === 1) ? 8 : (i * 2 >= player.hunger ? 16 : 0),
+          8, 8, 8, 2 + i * 8, 10, 8, 8
+        );
+      }
+      break;
+
+    case "bars":
+      // Health
+      CTX.fillStyle = "#1a1c2c";
+      CTX.fillRect(2, 2, player.maxHealth + 2, 6);
+      CTX.fillRect(2, 9, player.maxHunger + 2, 6);
+
+      CTX.fillStyle = "#b13e53";
+      CTX.fillRect(3, 3, player.health, 4);
+
+      CTX.fillStyle = "#ffcd75";
+      CTX.fillRect(3, 10, player.hunger, 4);
+
+      drawText("HP", 3, 7, false);
+      drawText("EN", 3, 14, false);
+      break;
   }
 }
 
@@ -28,6 +59,7 @@ export function update(player) {
  * @param {Inventory} - An inventory instance
  */
 export function updateInventory(inv) {
+  // Loop through all of the player's hotbar slots
   for (let i = 0; i < 10; i++) {
     const
       dx = 2 + i * 17,
@@ -41,10 +73,55 @@ export function updateInventory(inv) {
     }
   }
 
-  CTX.clearRect(2 - SETTINGS.textShadow, CTX.canvas.height - 26, CTX.canvas.width, 4 + SETTINGS.textShadow);
+  // Clear out the old text and write new text
+  CTX.clearRect(2 - SETTINGS.textShadow, CTX.canvas.height - 36, CTX.canvas.width, 14 + SETTINGS.textShadow);
 
-  if (inv.items[inv.selectedSlot].count > 0) {
-    drawText(`${Item.types[inv.selectedSlot].name} (x${inv.items[inv.selectedSlot].count})`, 3, CTX.canvas.height - 22);
+  // Write item name, count, and other properties on the hotbar
+  const currentItem = inv.items[inv.selectedSlot];
+  const curItemType = Item.types[currentItem.id];
+
+  if (currentItem.count > 0 && currentItem.id > -1) {
+    drawText(`${Item.types[currentItem.id].name} (x${currentItem.count})`, 3, CTX.canvas.height - 22);
+
+    if (curItemType.type === "consumable") {
+      switch (SETTINGS.statDisplay) {
+        case "symbols":
+          // Draw health icons
+          if (curItemType.health > 0) {
+            for (let i = 0; i < Math.ceil(curItemType.health / 2); i++) {
+              CTX.drawImage(
+                UI_SHEET,
+                (curItemType.health - i * 2 === 1) ? 8 : 0,
+                0, 8, 8, 2 + i * 8, CTX.canvas.height - 36, 8, 8
+              );
+            }
+          }
+
+          // Draw hunger icons
+          if (curItemType.hunger > 0) {
+            for (let i = 0; i < Math.ceil(curItemType.hunger / 2); i++) {
+              CTX.drawImage(
+                UI_SHEET,
+                (curItemType.hunger - i * 2 === 1) ? 8 : 0,
+                8, 8, 8, 2 + (i + Math.ceil(curItemType.health / 2)) * 8, CTX.canvas.height - 36, 8, 8
+              );
+            }
+          }
+          break;
+
+        case "bars":
+          CTX.fillStyle = "#1a1c2c";
+          CTX.fillRect(2, CTX.canvas.height - 34, curItemType.health + 2, 6);
+          CTX.fillRect(5 + curItemType.health, CTX.canvas.height - 34, curItemType.hunger + 2, 6);
+
+          CTX.fillStyle = "#b13e53";
+          CTX.fillRect(3, CTX.canvas.height - 33, curItemType.health, 4);
+
+          CTX.fillStyle = "#ffcd75";
+          CTX.fillRect(6 + curItemType.health, CTX.canvas.height - 33, curItemType.hunger, 4);
+          break;
+      }
+    }
   }
 }
 
@@ -54,8 +131,8 @@ export function updateInventory(inv) {
  * @param {number} dx
  * @param {number} dy
  */
-export function drawText(text, dx, dy) {
-  if (SETTINGS.textShadow) {
+export function drawText(text, dx, dy, shadow = null) {
+  if ((SETTINGS.textShadow || shadow === true) && shadow !== false) {
     CTX.fillStyle = "#000000";
     CTX.fillText(text, dx - 1, dy + 1);
   }

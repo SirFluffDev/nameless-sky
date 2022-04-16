@@ -46,7 +46,8 @@ window['game'] = {
   LAYERS: layers,
   CONTAINER: container,
   SETTINGS: {
-    textShadow: true
+    textShadow: true,
+    statDisplay: "symbols"
   }
 };
 

@@ -29,4 +29,4 @@ const itemData = await (
 ).json();
 
 for (let i = 0; i < itemData.length; i++) { Item.createType(itemData[i]); }
-console.log("Loaded items!");
+console.log("Loaded items!", Item.types);

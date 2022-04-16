@@ -28,7 +28,7 @@ await world.generate({
 
   ocean: 0.5,
   sand: 0.55,
-  grass: 0.6,
+  grass: 0.7,
 });
 
 const player = new Player(

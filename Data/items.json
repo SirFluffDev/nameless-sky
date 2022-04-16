@@ -1,38 +1,101 @@
 [
   {
     "name": "wood",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "material"
   },
   {
     "name": "stone",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "material"
   },
   {
     "name": "blue berry",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "consumable",
+    "health": 1,
+    "hunger": 1
   },
   {
     "name": "regular berry",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "consumable",
+    "health": 2,
+    "hunger": 1
   },
   {
     "name": "orange",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "consumable",
+    "health": 2,
+    "hunger": 3
   },
   {
     "name": "copper",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "material"
   },
   {
     "name": "iron",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "material"
   },
   {
     "name": "gold",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "material"
   },
   {
     "name": "emerald",
-    "maxStack": 99
+    "maxStack": 99,
+    "type": "material"
+  },
+  {
+    "name": "copper pickaxe",
+    "maxStack": 1,
+    "type": "pick",
+    "damage": 1
+  },
+  {
+    "name": "iron pickaxe",
+    "maxStack": 1,
+    "type": "pick",
+    "damage": 2
+  },
+  {
+    "name": "gold pickaxe",
+    "maxStack": 1,
+    "type": "pick",
+    "damage": 3
+  },
+  {
+    "name": "emerald pickaxe",
+    "maxStack": 1,
+    "type": "pick",
+    "damage": 4
+  },
+  {
+    "name": "copper sword",
+    "maxStack": 1,
+    "type": "sword",
+    "damage": 2
+  },
+  {
+    "name": "iron sword",
+    "maxStack": 1,
+    "type": "sword",
+    "damage": 4
+  },
+  {
+    "name": "gold sword",
+    "maxStack": 1,
+    "type": "sword",
+    "damage": 6
+  },
+  {
+    "name": "emerald sword",
+    "maxStack": 1,
+    "type": "sword",
+    "damage": 8
   }
 ]

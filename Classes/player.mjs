@@ -61,6 +61,10 @@ export class Inventory {
           break;
         }
       }
+
+      if (i === this.items.length - 1) {
+        console.warn("The player's inventory is full!")
+      }
     }
 
     UI.updateInventory(this);
@@ -83,6 +87,12 @@ export default class Player {
 
   speed = 1;
   moving = false;
+
+  maxHealth = 20;
+  health = 17;
+
+  maxHunger = 20;
+  hunger = 11;
 
   inventory = new Inventory();
 
