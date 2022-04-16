@@ -44,7 +44,7 @@ const player = new Player(
   32 * 16, 32 * 16
 );
 
-window['game'].give = (item, count = 0) => { player.inventory.give(item, count) };
+window['game'].give = (item, count) => { player.inventory.give(item, count) };
 
 UI.updateInventory(player.inventory);
 UI.update(player)

@@ -30,17 +30,16 @@ export class Inventory {
 
   /**
    * Add an item or multiple of an item to an inventory
-   * @param {Item} item - The item to add
+   * @param {Item} item - The item to add (String, item id, or item object)
+   * @param {number} count - The count of the item (Optional)
    */
-  give(item, count = 0) {
+  give(item, count = 1) {
     if (typeof item === 'string') {
       if (Item.id[item] === undefined) { console.error("Invalid item!"); return; }
-
-      item = new Item(
-        Item.id[item],
-        count
-      );
-
+      item = new Item(Item.id[item], count);
+      console.log("Parsed item:", item);
+    } else if (typeof item === 'number') {
+      item = new Item(item, count);
       console.log("Parsed item:", item);
     }
 
@@ -49,7 +48,11 @@ export class Inventory {
     for (let i = 0; i < this.items.length; i++) {
       const slot = this.items[i];
 
-      if (slot.id === item.id) {
+      if (slot.count === 0) {
+        this.items[i].id = item.id;
+        this.items[i].count = toGive;
+        break;
+      } else if (slot.id === item.id) {
         if (slot.count + toGive > Item.types[slot.id].maxStack) {
           toGive -= (Item.types[slot.id].maxStack - slot.count);
           this.items[i].count = Item.types[slot.id].maxStack;
@@ -57,12 +60,7 @@ export class Inventory {
           this.items[i].count += item.count;
           break;
         }
-      } else if (slot.count === 0) {
-        this.items[i].id = item.id;
-        this.items[i].count = toGive;
-        break;
       }
-
     }
 
     UI.updateInventory(this);
