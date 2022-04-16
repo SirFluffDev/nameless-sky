@@ -16,14 +16,6 @@ const
   LAYERS = window['game'].LAYERS,
   TILE_SIZE = window['game'].TILE_SIZE;
 
-// Load all tile types
-const tileData = await (
-  await fetch("./Data/tiles.json")
-).json();
-
-for (let i = 0; i < tileData.length; i++) { Tile.create(tileData[i]); }
-console.log("Loaded tiles");
-
 // World creation
 let world = new World(
   'worldname', 64, 64,

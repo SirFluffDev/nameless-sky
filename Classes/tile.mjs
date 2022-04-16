@@ -19,6 +19,14 @@ class Tile {
   }
 }
 
+// Load all tile types
+const tileData = await (
+  await fetch("./Data/tiles.json")
+).json();
+
+for (let i = 0; i < tileData.length; i++) { Tile.create(tileData[i]); }
+console.log("Loaded tiles!");
+
 class Tileset {
   constructor(img, res) {
     this.img = img;

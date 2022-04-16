@@ -9,7 +9,7 @@ const
   ITEM_SHEET = await loadImageAsync("./Assets/items.png"),
   SETTINGS = window['game'].SETTINGS;
 
-console.debug(UI_SHEET);
+console.debug("Imported item sheet!", UI_SHEET);
 CTX.font = '4px pixel';
 
 /**

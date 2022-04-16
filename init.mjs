@@ -50,4 +50,4 @@ window['game'] = {
   }
 };
 
-console.debug("...Initialized!");
+console.log("...Initialized!");
