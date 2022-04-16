@@ -1,44 +1,73 @@
+import * as Utility from "./utility.mjs";
 import * as Input from "./input.mjs";
 import { Tile } from "./tile.mjs";
 
-import * as Utility from "./utility.mjs";
+import Item from "./item.mjs";
+
+import * as UI from "./ui.mjs";
 
 // Load global variables
 const
   TILE_SIZE = window['game'].TILE_SIZE,
   SCALE = window['game'].SCALE;
 
-//#region - UI
-
-// Load UI assets
-const UI_Sheet = await Utility.loadImageAsync("./Assets/ui.png");
-const UI_LAYER = window['game'].LAYERS.UI;
-
-class Item {
-  constructor(id, count = 1) {
-    this.id = id;
-    this.count = count;
-  }
-}
-
-class Inventory {
+export class Inventory {
   slots = 9;
-  items = [];
+  selectedSlot = 0;
 
-  constructor() {
+  items = [
+    new Item(0, 2),
+    new Item(1, 5),
+    new Item(2, 3),
+    new Item(3, 7),
+    new Item(4, 2),
+    new Item(5, 6),
+    new Item(6, 4),
+    new Item(7, 1),
+    new Item(8, 9),
+    new Item(-1, 0)
+  ];
 
+  /**
+   * Add an item or multiple of an item to an inventory
+   * @param {Item} item - The item to add
+   */
+  give(item, count = 0) {
+    if (typeof item === 'string') {
+      if (Item.id[item] === undefined) { console.error("Invalid item!"); return; }
+
+      item = new Item(
+        Item.id[item],
+        count
+      );
+
+      console.log("Parsed item:", item);
+    }
+
+    let toGive = item.count;
+
+    for (let i = 0; i < this.items.length; i++) {
+      const slot = this.items[i];
+
+      if (slot.id === item.id) {
+        if (slot.count + toGive > Item.types[slot.id].maxStack) {
+          toGive -= (Item.types[slot.id].maxStack - slot.count);
+          this.items[i].count = Item.types[slot.id].maxStack;
+        } else {
+          this.items[i].count += item.count;
+          break;
+        }
+      } else if (slot.count === 0) {
+        this.items[i].id = item.id;
+        this.items[i].count = toGive;
+        break;
+      }
+
+    }
+
+    UI.updateInventory(this);
   }
 }
-
-function updateUI(s) {
-  for (let i = 0; i < 10; i++) {
-    UI_LAYER.drawImage(UI_Sheet, 0, 0, 8, 8, 2 + i * 8, 2, 8, 8);
-    UI_LAYER.drawImage(UI_Sheet, 0, 8, 8, 8, UI_LAYER.canvas.width - 107 + i * 9, 2, 8, 8);
-
-    UI_LAYER.drawImage(UI_Sheet, (i === s ? 16 : 0), 16, 16, 16, 2 + i * 17, UI_LAYER.canvas.height - 18 - 16, 16, 16);
-  }
-}
-//#endregion
 
 /**
  * A simple class used to manage a player
@@ -57,9 +86,7 @@ export default class Player {
   speed = 1;
   moving = false;
 
-  inventory = {
-    selectedSlot: 0
-  }
+  inventory = new Inventory();
 
   /**
    * Create a new player
@@ -78,17 +105,23 @@ export default class Player {
 
   /**
    * Update all the player's information, and adjust the screen offset
-   * @param {HTMLCanvasElement} canvas1
-   * @param {HTMLCanvasElement} canvas2
+   * @param {HTMLCanvasElement} c1
+   * @param {HTMLCanvasElement} c2
    * @param {World} world 
    * @param {DOMHighResTimeStamp} timestamp 
    */
-  update(canvas1, canvas2, world, timestamp) {
+  update(world, timestamp) {
     this.timestamp = timestamp;
 
+    // Inventory slot changing
     if (Input.mouse.wheel !== 0) {
-      this.inventory.selectedSlot = Math.max(Math.min(this.inventory.selectedSlot + Input.mouse.wheel, 9), 0);
-      updateUI(this.inventory.selectedSlot);
+      const n = (this.inventory.selectedSlot + Input.mouse.wheel);
+
+      if (n > 9) { this.inventory.selectedSlot = 0 }
+      else if (n < 0) { this.inventory.selectedSlot = 9 }
+      else { this.inventory.selectedSlot = n };
+
+      UI.updateInventory(this.inventory);
     }
 
     // Cache previous position
@@ -168,26 +201,29 @@ export default class Player {
     this.x = Math.max(this.x, 0);
     this.y = Math.max(this.y, 0);
 
+    const c1 = window['game'].LAYERS.world.canvas;
+    const c2 = window['game'].LAYERS.top.canvas;
+
     // Offset the world based on player position
     if (this.x > 7 * TILE_SIZE) {
-      canvas1.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
-      canvas2.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
+      c1.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
+      c2.style.left = -Math.floor(this.x) % TILE_SIZE * SCALE + 'px';
     } else {
-      canvas1.style.left = 0;
-      canvas2.style.left = 0;
+      c1.style.left = 0;
+      c2.style.left = 0;
     }
 
     if (this.y >= 4 * TILE_SIZE) {
-      canvas1.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
-      canvas2.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
+      c1.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
+      c2.style.top = -Math.floor(this.y) % TILE_SIZE * SCALE + 'px';
     } else {
-      canvas1.style.top = 0;
-      canvas2.style.top = 0;
+      c1.style.top = 0;
+      c2.style.top = 0;
     }
   }
 
   // Draw and animate the player onscreen
-  draw(ctx, px, py, world) {
+  draw(ctx, px, py) {
     const dx = this.moving ? ~~((this.timestamp - this.animationStart) / (175 / this.speed)) % 2 + 1 : 0;
 
     ctx.drawImage(

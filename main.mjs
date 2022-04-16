@@ -4,6 +4,7 @@ import "./init.mjs";
 // Import all needed modules
 import * as Input from "./Classes/input.mjs";
 import * as Utility from "./Classes/utility.mjs";
+import * as UI from "./Classes/ui.mjs";
 
 import World from "./Classes/world.mjs";
 import Player from "./Classes/player.mjs";
@@ -16,10 +17,12 @@ const
   TILE_SIZE = window['game'].TILE_SIZE;
 
 // Load all tile types
-const tileData = await (await fetch("./Data/tiles.json")).json();
-for (let i = 0; i < tileData.length; i++) {
-  Tile.create(tileData[i]);
-}
+const tileData = await (
+  await fetch("./Data/tiles.json")
+).json();
+
+for (let i = 0; i < tileData.length; i++) { Tile.create(tileData[i]); }
+console.log("Loaded tiles");
 
 // World creation
 let world = new World(
@@ -36,10 +39,15 @@ await world.generate({
   grass: 0.6,
 });
 
-let player = new Player(
+const player = new Player(
   await Utility.loadImageAsync("./Assets/player.png"),
   32 * 16, 32 * 16
 );
+
+window['game'].give = (item, count = 0) => { player.inventory.give(item, count) };
+
+UI.updateInventory(player.inventory);
+UI.update(player)
 
 // Draw the world
 function draw() {
@@ -63,10 +71,7 @@ function loop(timestamp) {
   window.requestAnimationFrame(loop);
 
   // Run all player related code
-  player.update(
-    LAYERS.world.canvas, LAYERS.top.canvas,
-    world, timestamp
-  );
+  player.update(world, timestamp);
 
   // Re-draw the world if the player moves a tile
   if (

@@ -1,16 +1,15 @@
 /**
  * Loads an image asynchronously using promises and callbacks
  * @param {String} src - Image URL to load from
+ * @returns {Promise} A promise
  */
 
-export function loadImageAsync(src) {
-  return new Promise((resolve, reject) => {
-    let img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = src;
-  })
-}
+export const loadImageAsync = (src) => new Promise((resolve, reject) => {
+  let img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = src;
+});
 
 export class Vector {
   constructor(x = 0, y = 0) {

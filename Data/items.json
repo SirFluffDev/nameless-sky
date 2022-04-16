@@ -1,0 +1,38 @@
+[
+  {
+    "name": "wood",
+    "maxStack": 99
+  },
+  {
+    "name": "stone",
+    "maxStack": 99
+  },
+  {
+    "name": "blue berry",
+    "maxStack": 99
+  },
+  {
+    "name": "regular berry",
+    "maxStack": 99
+  },
+  {
+    "name": "orange",
+    "maxStack": 99
+  },
+  {
+    "name": "copper",
+    "maxStack": 99
+  },
+  {
+    "name": "iron",
+    "maxStack": 99
+  },
+  {
+    "name": "gold",
+    "maxStack": 99
+  },
+  {
+    "name": "emerald",
+    "maxStack": 99
+  }
+]

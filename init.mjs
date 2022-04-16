@@ -1,5 +1,3 @@
-import { loadImageAsync } from "./Classes/utility.mjs";
-
 console.log("Initializing...")
 
 // Get the canvas scale
@@ -7,6 +5,9 @@ const SCALE = Math.min(
   Math.floor(window.innerWidth / 240),
   Math.floor(window.innerHeight / 144)
 );
+
+// CSS Modification
+document.documentElement.style.setProperty('--scale', SCALE + 'px');
 
 // Setup the container
 const container = document.getElementById("container");
@@ -24,8 +25,6 @@ for (let i = 0; i < layersObj.length; i++) {
 
   if (c.nodeName !== "CANVAS") { continue; }
 
-  c.width = 256;
-  c.height = 160;
   c.style.width = c.width * SCALE + 'px';
   c.style.height = c.height * SCALE + 'px';
 
@@ -38,9 +37,6 @@ for (let i = 0; i < layersObj.length; i++) {
   });
 }
 
-layers.UI.font = '4px pixel';
-layers.UI.fillText("I am a block of text!", 10, 10);
-
 console.debug("Loaded all layers");
 
 // Save global values
@@ -48,7 +44,10 @@ window['game'] = {
   SCALE: SCALE,
   TILE_SIZE: 16,
   LAYERS: layers,
-  CONTAINER: container
+  CONTAINER: container,
+  SETTINGS: {
+    textShadow: true
+  }
 };
 
 console.debug("...Initialized!");
