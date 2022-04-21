@@ -1,25 +1,44 @@
+import * as UI from "./ui.mjs";
+
 /**
- * Class for handling items
+ * A class to store an instance of an item
  */
 export default class Item {
-  static types = [];
-  static id = {};
+  // The list of all items
+  static list = [];
 
+  // The different use cases of items
+  static classes = {
+    food: (item, player) => {
+      const itemType = Item.list[item.id];
+
+      if (itemType.healAmount > 0) player.heal(itemType.healAmount);
+      if (itemType.feedAmount > 0) player.feed(itemType.feedAmount);
+      item.count--;
+
+      UI.update(player);
+    }
+  }
+
+  /**
+   * An instance of an item
+   * @param {number} id - The id of the item
+   * @param {number} count - The amount of the item
+   */
   constructor(id, count = 1) {
     this.id = id;
     this.count = count;
   }
 
-  /** 
-   * Create a new type of item
-   * @param {object} properties - The item's properties
-   * 
-   * @param {string} properties.name - The item's name
-   * @param {number} properties.maxStack - The maximum stack size of the item
+  /**
+   * Use an item
+   * @param {Player} player - The player affected by the item's usage
    */
-  static createType(properties) {
-    Item.id[properties.name] = Item.types.length;
-    Item.types.push(properties);
+  use(player) {
+    if (this.count <= 0 || !Item.classes.hasOwnProperty(Item.list[this.id].type)) return;
+
+    // Check if the item has a use event - If so, run it
+    Item.classes[Item.list[this.id].type](this, player);
   }
 }
 
@@ -28,5 +47,5 @@ const itemData = await (
   await fetch("./Data/items.json")
 ).json();
 
-for (let i = 0; i < itemData.length; i++) { Item.createType(itemData[i]); }
-console.log("Loaded items!", Item.types);
+for (let i = 0; i < itemData.length; i++) { Item.list.push(itemData[i]); }
+console.log("Loaded items!", Item.list);

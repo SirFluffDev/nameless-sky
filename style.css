@@ -45,37 +45,3 @@ body {
   background-color: black;
   overflow: hidden;
 }
-
-#loading {
-  text-align: center;
-
-  color: white;
-  /*font-family: 'Courier New', Courier, monospace;*/
-
-  /* Center vertically and horizontally */
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-
-  width: 512px;
-}
-
-#loading>div {
-  margin-top: calc(var(--scale) * 4);
-  padding: 0px;
-
-  width: 100%;
-
-  outline: var(--scale) solid white;
-  outline-offset: var(--scale);
-}
-
-#loading>div>div {
-  background-color: white;
-  width: 0%;
-  height: 20px;
-  font-size: 12px;
-}

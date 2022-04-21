@@ -23,8 +23,10 @@ const layersObj = container.children;
 for (let i = 0; i < layersObj.length; i++) {
   let c = layersObj[i];
 
+  // Skip non-canvas elements
   if (c.nodeName !== "CANVAS") { continue; }
 
+  // Scale canvas to the standard size
   c.style.width = c.width * SCALE + 'px';
   c.style.height = c.height * SCALE + 'px';
 
@@ -40,7 +42,7 @@ for (let i = 0; i < layersObj.length; i++) {
 console.debug("Loaded all layers");
 
 // Save global values
-window['game'] = {
+window.game = {
   SCALE: SCALE,
   TILE_SIZE: 16,
   LAYERS: layers,

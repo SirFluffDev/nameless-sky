@@ -12,23 +12,23 @@
   {
     "name": "blue berry",
     "maxStack": 99,
-    "type": "consumable",
-    "health": 1,
-    "hunger": 1
+    "type": "food",
+    "healAmount": 0,
+    "feedAmount": 1
   },
   {
     "name": "regular berry",
     "maxStack": 99,
-    "type": "consumable",
-    "health": 2,
-    "hunger": 1
+    "type": "food",
+    "healAmount": 1,
+    "feedAmount": 0
   },
   {
     "name": "orange",
     "maxStack": 99,
-    "type": "consumable",
-    "health": 2,
-    "hunger": 3
+    "type": "food",
+    "healAmount": 1,
+    "feedAmount": 2
   },
   {
     "name": "copper",

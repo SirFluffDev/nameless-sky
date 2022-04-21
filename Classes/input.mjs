@@ -6,13 +6,16 @@ let cw, ch;
 let mouse = {
   x: 0,
   y: 0,
-  wheel: 0
+  wheel: 0,
+  down: false
 };
 
 document.addEventListener("mousemove", (e) => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
 });
+
+document.addEventListener("mousedown", (e) => { mouse.down = true })
 
 document.addEventListener("wheel", (e) => { mouse.wheel = e.deltaY > 0 ? 1 : -1 });
 
@@ -149,7 +152,7 @@ export function getJoystickVector(id) {
 }
 
 export function init() {
-  const container = window['game'].CONTAINER;
+  const container = window.game.CONTAINER;
   cw = parseInt(container.style.width, 10);
   ch = parseInt(container.style.height, 10);
 }
@@ -158,6 +161,7 @@ export function update() {
   touch.tapped = false;
   keyboard.pressed = [];
   mouse.wheel = 0;
+  mouse.down = false;
 }
 
 export { mouse };

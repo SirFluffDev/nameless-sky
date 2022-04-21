@@ -4,10 +4,10 @@ import Item from "./item.mjs";
 
 // Load UI layer and spritesheet
 const
-  CTX = window['game'].LAYERS.UI,
+  CTX = window.game.LAYERS.UI,
   UI_SHEET = await loadImageAsync("./Assets/ui.png"),
   ITEM_SHEET = await loadImageAsync("./Assets/items.png"),
-  SETTINGS = window['game'].SETTINGS;
+  SETTINGS = window.game.SETTINGS;
 
 console.debug("Imported item sheet!", UI_SHEET);
 CTX.font = '4px pixel';
@@ -78,32 +78,32 @@ export function updateInventory(inv) {
 
   // Write item name, count, and other properties on the hotbar
   const currentItem = inv.items[inv.selectedSlot];
-  const curItemType = Item.types[currentItem.id];
+  const currentItemType = Item.list[currentItem.id];
 
   if (currentItem.count > 0 && currentItem.id > -1) {
-    drawText(`${Item.types[currentItem.id].name} (x${currentItem.count})`, 3, CTX.canvas.height - 22);
+    drawText(`${Item.list[currentItem.id].name} (x${currentItem.count})`, 3, CTX.canvas.height - 22);
 
-    if (curItemType.type === "consumable") {
+    if (currentItemType.type === "food") {
       switch (SETTINGS.statDisplay) {
         case "symbols":
           // Draw health icons
-          if (curItemType.health > 0) {
-            for (let i = 0; i < Math.ceil(curItemType.health / 2); i++) {
+          if (currentItemType.healAmount > 0) {
+            for (let i = 0; i < Math.ceil(currentItemType.healAmount / 2); i++) {
               CTX.drawImage(
                 UI_SHEET,
-                (curItemType.health - i * 2 === 1) ? 8 : 0,
+                (currentItemType.healAmount - i * 2 === 1) ? 8 : 0,
                 0, 8, 8, 2 + i * 8, CTX.canvas.height - 36, 8, 8
               );
             }
           }
 
           // Draw hunger icons
-          if (curItemType.hunger > 0) {
-            for (let i = 0; i < Math.ceil(curItemType.hunger / 2); i++) {
+          if (currentItemType.feedAmount > 0) {
+            for (let i = 0; i < Math.ceil(currentItemType.feedAmount / 2); i++) {
               CTX.drawImage(
                 UI_SHEET,
-                (curItemType.hunger - i * 2 === 1) ? 8 : 0,
-                8, 8, 8, 2 + (i + Math.ceil(curItemType.health / 2)) * 8, CTX.canvas.height - 36, 8, 8
+                (currentItemType.feedAmount - i * 2 === 1) ? 8 : 0,
+                8, 8, 8, 2 + (i + Math.ceil(currentItemType.healAmount / 2)) * 8, CTX.canvas.height - 36, 8, 8
               );
             }
           }
@@ -111,14 +111,14 @@ export function updateInventory(inv) {
 
         case "bars":
           CTX.fillStyle = "#1a1c2c";
-          CTX.fillRect(2, CTX.canvas.height - 34, curItemType.health + 2, 6);
-          CTX.fillRect(5 + curItemType.health, CTX.canvas.height - 34, curItemType.hunger + 2, 6);
+          CTX.fillRect(2, CTX.canvas.height - 34, currentItemType.healAmount + 2, 6);
+          CTX.fillRect(5 + currentItemType.healAmount, CTX.canvas.height - 34, currentItemType.feedAmount + 2, 6);
 
           CTX.fillStyle = "#b13e53";
-          CTX.fillRect(3, CTX.canvas.height - 33, curItemType.health, 4);
+          CTX.fillRect(3, CTX.canvas.height - 33, currentItemType.healAmount, 4);
 
           CTX.fillStyle = "#ffcd75";
-          CTX.fillRect(6 + curItemType.health, CTX.canvas.height - 33, curItemType.hunger, 4);
+          CTX.fillRect(6 + currentItemType.healAmount, CTX.canvas.height - 33, currentItemType.feedAmount, 4);
           break;
       }
     }

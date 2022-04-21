@@ -1,14 +1,9 @@
 // Import perlin noise library for worldgen
 import { Tile } from "./tile.mjs";
 
-// Loading screen
 const
-  loadingScreen = document.getElementById("loading"),
-  loadingBar = loadingScreen.children[0].children[0];
-
-const
-  bottomLayer = window['game'].LAYERS.world,
-  topLayer = window['game'].LAYERS.top;
+  bottomLayer = window.game.LAYERS.world,
+  topLayer = window.game.LAYERS.top;
 
 /**
  * A simple class used to create and store arrays of tiles
@@ -58,32 +53,37 @@ export default class World {
    * @param {Number} settings.grass - The threshold for grass generation
    */
   async generate(settings) {
-    const self = this;
-    loadingScreen.childNodes[0].nodeValue = `Generating world...`;
+    const UI_LAYER = window.game.LAYERS.UI;
+    UI_LAYER.fillStyle = "#ffffff";
+    UI_LAYER.strokeStyle = "#ffffff";
+
+    // Draw the loading bar
+    UI_LAYER.fillText("Generating world...", 0, 4);
+    UI_LAYER.strokeRect(0.5, 5.5, 103, 7);
+
+    const world = this;
 
     return new Promise((resolve, reject) => {
-      let start = performance.now()
+      const start = performance.now();
 
       // Create and run a worker for worldgen //
-      let generationWorker = new Worker(location.href + "Workers/generation.js");
-      generationWorker.postMessage([settings, this.width, this.height]);
+      const worker = new Worker(location.href + "Workers/generation.js");
+      worker.postMessage([settings, this.width, this.height]);
 
-      // Update the progress bar //
-      generationWorker.onmessage = function (e) {
-        if (e.data[0] == 'data') {
-          loadingScreen.setAttribute('hidden', true);
-          console.log(`Finished generating in ${performance.now() - start}ms`)
+      worker.onmessage = function (e) {
+        // If the generation has finished, copy the finished data to the world array
+        if (typeof e.data === 'object') {
+          console.log(`Finished generating in ${performance.now() - start}ms`);
 
-          self.data = e.data[1];
-
+          world.data = e.data;
+          UI_LAYER.clear();
           resolve();
-        } else {
-          // Update the loading bar, and, if filled, announce that the world has started loading in
-          loadingBar.style.width = `${e.data[1]}%`;
-          if (e.data[1] == 100) loadingScreen.innerText = "Loading...";
         }
+
+        // Otherwise, update the loading bar
+        else { UI_LAYER.fillRect(2, 7, Math.ceil(e.data), 4); }
       }
-    })
+    });
   }
   //#endregion
 

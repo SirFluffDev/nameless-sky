@@ -1,16 +1,14 @@
-import * as Utility from "./utility.mjs";
 import * as Input from "./input.mjs";
-import { Tile } from "./tile.mjs";
-
-import Item from "./item.mjs";
-
 import * as UI from "./ui.mjs";
+import { Tile } from "./tile.mjs";
+import Item from "./item.mjs";
 
 // Load global variables
 const
-  TILE_SIZE = window['game'].TILE_SIZE,
-  SCALE = window['game'].SCALE;
+  TILE_SIZE = window.game.TILE_SIZE,
+  SCALE = window.game.SCALE;
 
+//#region - Inventory class
 export class Inventory {
   slots = 9;
   selectedSlot = 0;
@@ -53,9 +51,9 @@ export class Inventory {
         this.items[i].count = toGive;
         break;
       } else if (slot.id === item.id) {
-        if (slot.count + toGive > Item.types[slot.id].maxStack) {
-          toGive -= (Item.types[slot.id].maxStack - slot.count);
-          this.items[i].count = Item.types[slot.id].maxStack;
+        if (slot.count + toGive > Item.list[slot.id].maxStack) {
+          toGive -= (Item.list[slot.id].maxStack - slot.count);
+          this.items[i].count = Item.list[slot.id].maxStack;
         } else {
           this.items[i].count += item.count;
           break;
@@ -70,10 +68,10 @@ export class Inventory {
     UI.updateInventory(this);
   }
 }
+//#endregion
 
 /**
  * A simple class used to manage a player
- * @property {Number} speed - The player's speed multiplier
  */
 export default class Player {
   // Movement //
@@ -112,6 +110,18 @@ export default class Player {
   }
 
   /**
+   * Heal the player by a certain amount
+   * @param {number} amount - The amount of HP to heal by
+   */
+  heal = (amount) => this.health = Math.min(this.health + amount, this.maxHealth);
+
+  /**
+   * Fill the player's hunger by a certain amount
+   * @param {number} amount - The amount of hunger to restore
+   */
+  feed = (amount) => this.hunger = Math.min(this.hunger + amount, this.maxHunger);
+
+  /**
    * Update all the player's information, and adjust the screen offset
    * @param {HTMLCanvasElement} c1
    * @param {HTMLCanvasElement} c2
@@ -129,6 +139,11 @@ export default class Player {
       else if (n < 0) { this.inventory.selectedSlot = 9 }
       else { this.inventory.selectedSlot = n };
 
+      UI.updateInventory(this.inventory);
+    }
+
+    if (Input.mouse.down) {
+      this.inventory.items[this.inventory.selectedSlot].use(this);
       UI.updateInventory(this.inventory);
     }
 
@@ -209,8 +224,8 @@ export default class Player {
     this.x = Math.max(this.x, 0);
     this.y = Math.max(this.y, 0);
 
-    const c1 = window['game'].LAYERS.world.canvas;
-    const c2 = window['game'].LAYERS.top.canvas;
+    const c1 = window.game.LAYERS.world.canvas;
+    const c2 = window.game.LAYERS.top.canvas;
 
     // Offset the world based on player position
     if (this.x > 7 * TILE_SIZE) {

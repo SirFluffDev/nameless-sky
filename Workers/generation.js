@@ -64,31 +64,32 @@ class Perlin {
 //#endregion
 
 onmessage = function (e) {
-  let settings = e.data[0];
-
-  let width = e.data[1];
-  let height = e.data[2];
+  const
+    SETTINGS = e.data[0],
+    WIDTH = e.data[1],
+    HEIGHT = e.data[2];
 
   let data = [];
-  let perlin = new Perlin();
+
+  const perlin = new Perlin();
   let pondPerlin = new Perlin();
   let decPerlin = new Perlin();
 
   console.debug("(worker) Generating world...");
 
-  for (let y = 0; y < height; y++) {
+  for (let y = 0; y < HEIGHT; y++) {
     data.push([]);
 
-    for (let x = 0; x < width; x++) {
+    for (let x = 0; x < WIDTH; x++) {
       // Fetch a number from 0 to 1 from the perlin noise //
-      let p = (perlin.get(y * settings.scale + 0.5, x * settings.scale + 0.5) + 1) / 2;
+      let p = (perlin.get(y * SETTINGS.scale + 0.5, x * SETTINGS.scale + 0.5) + 1) / 2;
       let cur;
 
       // Ocean
-      if (p <= settings.ocean) { cur = { id: 0, dec: 0 }; }
+      if (p <= SETTINGS.ocean) { cur = { id: 0, dec: 0 }; }
 
       // Beaches
-      else if (p > settings.ocean && p <= settings.sand) {
+      else if (p > SETTINGS.ocean && p <= SETTINGS.sand) {
         cur = {
           id: 2,
           dec: Math.round(Math.random() * 0.55) * ~~(Math.random() * 4)
@@ -96,11 +97,11 @@ onmessage = function (e) {
       }
 
       // Land
-      else if (p > settings.sand && p <= settings.grass) {
-        let w = pondPerlin.get(x * settings.pondScale + 0.5, y * settings.pondScale + 0.5);
+      else if (p > SETTINGS.sand && p <= SETTINGS.grass) {
+        let w = pondPerlin.get(x * SETTINGS.pondScale + 0.5, y * SETTINGS.pondScale + 0.5);
 
         // Create random ponds on land
-        if (w > 0.3 && p > settings.sand + 0.05)
+        if (w > 0.3 && p > SETTINGS.sand + 0.05)
           cur = { id: 0, dec: Math.round(Math.random() * 0.7) };
 
         else {
@@ -132,13 +133,11 @@ onmessage = function (e) {
       data[y].push(cur);
     }
 
-    // Figure out what percent of generation is completed, then send it over to the main thread //
-    let p = ((y + 1) * width) / (width * height) * 100;
-    this.postMessage(['UI', p]);
-
+    // Update loading bar percentage //
+    this.postMessage(((y + 1) * WIDTH) / (WIDTH * HEIGHT) * 100);
   }
 
   // Return the generated data array //
   console.debug("(worker) Finished, sending data back to main thread")
-  this.postMessage(['data', data]);
+  this.postMessage(data);
 }
