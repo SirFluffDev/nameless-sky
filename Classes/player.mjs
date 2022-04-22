@@ -178,7 +178,7 @@ export default class Player {
     if (Math.abs(this.cy) > 1) { yVel += ~~(this.cy); this.cy = this.cy % 1; }
     //#endregion
 
-    //#region - Collision
+    // Collision
     const newX = this.x + xVel, newY = this.y + yVel;
 
     const
@@ -187,38 +187,13 @@ export default class Player {
       bottomLeft = world.get(Math.floor((newX + 3) / TILE_SIZE), Math.floor((newY + 15) / TILE_SIZE)),
       bottomRight = world.get(Math.floor((newX + 12) / TILE_SIZE), Math.floor((newY + 15) / TILE_SIZE));
 
-    // Moving up
-    if (yVel < 0) {
-      if (Tile.types[topLeft.id].solid || Tile.types[topRight.id].solid) {
-        yVel = 0;
-      }
-    }
-
-    // Moving down
-    if (yVel > 0) {
-      if (Tile.types[bottomLeft.id].solid || Tile.types[bottomRight.id].solid) {
-        yVel = 0;
-      }
-    }
-
-    // Moving Left
-    if (xVel < 0) {
-      if (Tile.types[topLeft.id].solid || Tile.types[bottomLeft.id].solid) {
-        xVel = 0;
-      }
-    }
-
-    // Moving right
-    if (xVel > 0) {
-      if (Tile.types[topRight.id].solid || Tile.types[bottomRight.id].solid) {
-        xVel = 0;
-      }
-    }
+    if (yVel < 0 && Tile.types[topLeft.id].solid || Tile.types[topRight.id].solid) { yVel = 0; }
+    if (yVel > 0 && Tile.types[bottomLeft.id].solid || Tile.types[bottomRight.id].solid) { yVel = 0; }
+    if (xVel < 0 && Tile.types[topLeft.id].solid || Tile.types[bottomLeft.id].solid) { xVel = 0; }
+    if (xVel > 0 && Tile.types[topRight.id].solid || Tile.types[bottomRight.id].solid) { xVel = 0; }
 
     this.x += xVel;
     this.y += yVel;
-
-    //#endregion
 
     // Stop player from crossing the world border
     this.x = Math.max(this.x, 0);
